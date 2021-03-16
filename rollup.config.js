@@ -10,9 +10,10 @@ const dev = process.env.ROLLUP_WATCH === 'true'
 export default {
   input: 'src/main.ts',
   output: {
-    dir: 'dist',
+    file: 'dist/main.js',
     format: 'cjs',
     sourcemap: dev,
+    inlineDynamicImports: true,
   },
   plugins: [
     replace({

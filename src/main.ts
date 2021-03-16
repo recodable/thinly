@@ -21,7 +21,7 @@ async function main() {
 
     if (actionModule.findMany) {
       router.get(`/${path}`, async function findMany(ctx) {
-        ctx.body = await actionModule.findMany(ctx)
+        ctx.body = await actionModule.findMany()
       })
     }
 
