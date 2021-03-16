@@ -5,6 +5,7 @@ const Router = require('@koa/router')
 const cors = require('@koa/cors')
 const bodyParser = require('koa-bodyparser')
 import { compile } from './compiler'
+const serverless = require('serverless-http')
 
 async function main() {
   const app = new Koa()
@@ -57,7 +58,7 @@ async function main() {
     posts: await mapAction('posts'),
   }
 
-  compile(actions)
+  // compile(actions)
 
   app.listen(process.env.API_PORT, () => {
     console.log(`Listening to port: ${process.env.API_PORT}`)
@@ -68,4 +69,4 @@ if (process.env.NODE_ENV === 'development') {
   main()
 }
 
-export { main }
+export const handler = serverless(main)
