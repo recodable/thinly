@@ -16,6 +16,7 @@ export default {
   },
   plugins: [
     replace({
+      preventAssignment: true,
       'process.env.NODE_ENV': JSON.stringify(
         dev ? 'development' : 'production',
       ),
@@ -25,5 +26,5 @@ export default {
     dynamicImportVars(),
     dev && run(),
   ],
-  external: Object.keys(pkg.dependencies),
+  external: [...Object.keys(pkg.dependencies)],
 }

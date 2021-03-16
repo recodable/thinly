@@ -57,7 +57,7 @@ async function main() {
     posts: await mapAction('posts'),
   }
 
-  // compile(actions)
+  compile(actions)
 
   app.listen(process.env.API_PORT, () => {
     console.log(`Listening to port: ${process.env.API_PORT}`)
