@@ -4,7 +4,7 @@
   "prettier": "@recodable/prettier-config",
   "scripts": {
     "dev": "rollup -cw",
-    "build": "rollup -c"
+    "build": "rollup -c && netlify-lambda build dist"
   },
   "devDependencies": {
     "@recodable/prettier-config": "^1.0.1",
