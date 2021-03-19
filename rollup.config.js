@@ -94,7 +94,7 @@ export default [
     external: [...Object.keys(pkg.dependencies)],
   },
   {
-    input: 'src/client.js',
+    input: 'src/client.ts',
     output: {
       file: './node_modules/.thinly/client.js',
       format: 'es',
@@ -109,15 +109,12 @@ export default [
         ),
       }),
       // nodeResolve(),
-      // typescript(),
       // dynamicImportVars(),
       {
         name: 'thinly',
         async transform() {
           const { mapAction } = require('./node_modules/.thinly/mapAction')
           const { compile } = require('./node_modules/.thinly/compiler')
-          // const { mapAction } = require('./node_modules/.thinly/mapAction')
-          // const { compile } = await import('./node_modules/.thinly/compiler')
 
           const routers = {
             posts: await mapAction('posts', 'node_modules/.thinly'),
@@ -136,6 +133,7 @@ export default [
           }
         },
       },
+      typescript(),
     ],
     external: [...Object.keys(pkg.dependencies)],
   },
