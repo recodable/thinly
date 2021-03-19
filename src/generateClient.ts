@@ -15,16 +15,16 @@ export function generateClient(
       ),
       factory.createStringLiteral('axios'),
     ),
-    factory.createImportDeclaration(
-      undefined,
-      undefined,
-      factory.createImportClause(
-        false,
-        undefined,
-        factory.createNamespaceImport(factory.createIdentifier('yup')),
-      ),
-      factory.createStringLiteral('yup'),
-    ),
+    // factory.createImportDeclaration(
+    //   undefined,
+    //   undefined,
+    //   factory.createImportClause(
+    //     false,
+    //     undefined,
+    //     factory.createNamespaceImport(factory.createIdentifier('yup')),
+    //   ),
+    //   factory.createStringLiteral('yup'),
+    // ),
 
     factory.createClassDeclaration(
       undefined,

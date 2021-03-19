@@ -77,10 +77,10 @@ export function compile(actions) {
 
   const result = printer.printList(ListFormat.MultiLine, ast, resultFile)
 
-  writeFile('./dist/client.ts', result, (error) => {
-    if (error) return console.log(error)
-    console.log('Done!')
-  })
+  // writeFile('./dist/client.ts', result, (error) => {
+  //   if (error) return console.log(error)
+  //   console.log('Done!')
+  // })
 
   return result
 }
