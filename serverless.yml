@@ -1,10 +1,12 @@
 service: thinly-example
+
 provider:
   name: aws
   runtime: nodejs14.x
   stage: dev
   region: eu-central-1
   memorySize: 128
+
 functions:
   app:
     handler: dist/main.handler
