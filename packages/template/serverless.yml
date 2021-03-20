@@ -1,4 +1,4 @@
-service: thinly-example
+service: thinly-template
 
 provider:
   name: aws

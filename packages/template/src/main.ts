@@ -4,7 +4,7 @@ const Koa = require('koa')
 const cors = require('@koa/cors')
 const bodyParser = require('koa-bodyparser')
 const serverless = require('serverless-http')
-import { mapAction } from './mapAction'
+import { mapAction } from 'thinly'
 
 async function main() {
   const app = new Koa()

@@ -9,13 +9,17 @@ importers:
       prettier: ^2.2.1
       prettier-plugin-svelte: ^2.2.0
   packages/rollup-plugin-thinly:
+    dependencies:
+      thinly: link:../thinly
+      typescript: 4.2.3
     devDependencies:
       '@rollup/plugin-dynamic-import-vars': 1.1.1_rollup@2.42.1
       '@rollup/plugin-node-resolve': 11.2.0_rollup@2.42.1
       '@rollup/plugin-replace': 2.4.1_rollup@2.42.1
-      '@rollup/plugin-typescript': 8.2.0_rollup@2.42.1
+      '@rollup/plugin-typescript': 8.2.0_ee8a5b503bb99b5988fcd60aad6d3c9a
       '@types/node': 14.14.35
       rollup: 2.42.1
+      tslib: 2.1.0
     specifiers:
       '@rollup/plugin-dynamic-import-vars': ^1.1.1
       '@rollup/plugin-node-resolve': ^11.2.0
@@ -23,6 +27,9 @@ importers:
       '@rollup/plugin-typescript': ^8.2.0
       '@types/node': ^14.14.35
       rollup: ^2.42.1
+      thinly: workspace:^0.0.1
+      tslib: ^2.1.0
+      typescript: ^4.2.3
   packages/template:
     dependencies:
       '@koa/cors': 3.1.0
@@ -33,6 +40,7 @@ importers:
       koa: 2.13.1
       koa-bodyparser: 4.3.0
       lodash.startcase: 4.4.0
+      thinly: link:../thinly
       typescript: 4.2.3
       yup: 0.32.9
     devDependencies:
@@ -46,6 +54,7 @@ importers:
       '@types/node': 14.14.35
       prisma: 2.19.0
       rollup: 2.42.1
+      rollup-plugin-thinly: link:../rollup-plugin-thinly
       serverless: 2.30.3
       serverless-http: 2.7.0
       ts-node: 9.1.1_typescript@4.2.3
@@ -68,9 +77,11 @@ importers:
       koa-bodyparser: ^4.3.0
       lodash.startcase: ^4.4.0
       prisma: ^2.19.0
-      rollup: ^2.42.0
+      rollup: ^2.42.1
+      rollup-plugin-thinly: workspace:^0.0.1
       serverless: ^2.30.3
       serverless-http: ^2.7.0
+      thinly: workspace:^0.0.1
       ts-node: ^9.1.1
       tslib: ^2.1.0
       typescript: ^4.2.3
@@ -121,7 +132,7 @@ importers:
       koa-bodyparser: ^4.3.0
       lodash.startcase: ^4.4.0
       prisma: ^2.19.0
-      rollup: ^2.42.0
+      rollup: ^2.42.1
       serverless: ^1.83.2
       serverless-http: ^2.7.0
       serverless-rollup-plugin: ^2.2.1
@@ -130,7 +141,25 @@ importers:
       typescript: ^4.2.3
       yup: ^0.32.9
   packages/thinly:
-    specifiers: {}
+    dependencies:
+      tslib: 2.1.0
+      typescript: 4.2.3
+    devDependencies:
+      '@koa/router': 10.0.0
+      '@rollup/plugin-dynamic-import-vars': 1.1.1_rollup@2.42.1
+      '@rollup/plugin-node-resolve': 11.2.0_rollup@2.42.1
+      '@rollup/plugin-typescript': 8.2.0_ee8a5b503bb99b5988fcd60aad6d3c9a
+      lodash.startcase: 4.4.0
+      rollup: 2.42.1
+    specifiers:
+      '@koa/router': ^10.0.0
+      '@rollup/plugin-dynamic-import-vars': ^1.1.1
+      '@rollup/plugin-node-resolve': ^11.2.0
+      '@rollup/plugin-typescript': ^8.2.0
+      lodash.startcase: ^4.4.0
+      rollup: ^2.42.1
+      tslib: ^2.1.0
+      typescript: ^4.2.3
 lockfileVersion: 5.2
 packages:
   /2-thenable/1.0.0:
@@ -1079,7 +1108,6 @@ packages:
       koa-compose: 4.1.0
       methods: 1.1.2
       path-to-regexp: 6.2.0
-    dev: false
     engines:
       node: '>= 8.0.0'
     resolution:
@@ -1279,20 +1307,6 @@ packages:
       rollup: 2.42.1
       tslib: 2.1.0
       typescript: 4.2.3
-    dev: true
-    engines:
-      node: '>=8.0.0'
-    peerDependencies:
-      rollup: ^2.14.0
-      tslib: '*'
-      typescript: '>=3.4.0'
-    resolution:
-      integrity: sha512-5DyVsb7L+ehLfNPu/nat8Gq3uJGzku4bMFPt90XahtgiSBf7z9YKPLqFUJKMT41W/mJ98SVGDPOhzikGrr/Lhg==
-  /@rollup/plugin-typescript/8.2.0_rollup@2.42.1:
-    dependencies:
-      '@rollup/pluginutils': 3.1.0_rollup@2.42.1
-      resolve: 1.20.0
-      rollup: 2.42.1
     dev: true
     engines:
       node: '>=8.0.0'
@@ -1763,6 +1777,10 @@ packages:
     dev: true
     resolution:
       integrity: sha512-EYNwp3bU+98cpU4lAWYYL7Zz+2gryWH1qbdDTidVd6hkiR6weksdbMadyXKXNPEkQFhXM+hVO9ZygomHXp+AIw==
+  /@types/estree/0.0.46:
+    dev: true
+    resolution:
+      integrity: sha512-laIjwTQaD+5DukBZaygQ79K1Z0jb1bPEMRrkXSLjtCcZm+abyp5YbrqpSLzD42FwWW6gK/aS4NYpJ804nG2brg==
   /@types/glob/7.1.3:
     dependencies:
       '@types/minimatch': 3.0.3
@@ -3244,7 +3262,6 @@ packages:
     resolution:
       integrity: sha512-CYiCSgIF1p6EUByQPlGkKnP1M9g0ZV3qMIrqMqZqdwazygIA/YP2vrbcyl1h/WppKJTdl1F85cXIle+394iDAQ==
   /depd/1.1.2:
-    dev: false
     engines:
       node: '>= 0.6'
     resolution:
@@ -4408,7 +4425,6 @@ packages:
       setprototypeof: 1.2.0
       statuses: 1.5.0
       toidentifier: 1.0.0
-    dev: false
     engines:
       node: '>= 0.6'
     resolution:
@@ -4777,7 +4793,7 @@ packages:
       integrity: sha512-+lP4/6lKUBfQjZ2pdxThZvLUAafmZb8OAxFb8XXtiQmS35INgr85hdOGoEs124ez1FCnZJt6jau/T+alh58QFQ==
   /is-reference/1.2.1:
     dependencies:
-      '@types/estree': 0.0.39
+      '@types/estree': 0.0.46
     dev: true
     resolution:
       integrity: sha512-U82MsXXiFIrjCK4otLT+o2NA2Cd2g5MLoOVXUZjIOhLurrRxpEXzI8O0KZHr3IjLvlAH1kTPYSuqer5T9ZVBKQ==
@@ -5028,7 +5044,7 @@ packages:
       nested-error-stacks: 2.1.0
       optional: 0.1.4
       retry: 0.10.1
-      uuid: 3.3.2
+      uuid: 3.4.0
     dev: true
     engines:
       node: '>=8.5.1'
@@ -5106,7 +5122,6 @@ packages:
     resolution:
       integrity: sha1-qFzLQLfZhtjlo0Wzoazo6rz1Tec=
   /koa-compose/4.1.0:
-    dev: false
     resolution:
       integrity: sha512-8ODW8TrDuMYvXRwra/Kh7/rJo9BtOfPc6qO8eAfC80CnCvSjSl0bkRM24X6/XBBEyj0v1nRUQ1LyOy3dbqOWXw==
   /koa-convert/1.2.0:
@@ -5193,7 +5208,6 @@ packages:
     resolution:
       integrity: sha1-fFJqUtibRcRcxpC4gWO+BJf1UMs=
   /lodash.startcase/4.4.0:
-    dev: false
     resolution:
       integrity: sha1-lDbjTtJgk+1/+uGTYUQ1CRXZrdg=
   /lodash.union/4.6.0:
@@ -5931,7 +5945,6 @@ packages:
     resolution:
       integrity: sha512-GSmOT2EbHrINBf9SR7CDELwlJ8AENk3Qn7OikK4nFYAu3Ote2+JYNVvkpAEQm3/TLNEJFD/xZJjzyxg3KBWOzw==
   /path-to-regexp/6.2.0:
-    dev: false
     resolution:
       integrity: sha512-f66KywYG6+43afgE/8j/GoiNyygk/bnoCbps++3ErRKsIYkGGupyv07R2Ok5m9i67Iqc+T2g1eAUGUPzWhYTyg==
   /path-type/3.0.0:
@@ -6413,7 +6426,7 @@ packages:
       safe-buffer: 5.2.1
       tough-cookie: 2.5.0
       tunnel-agent: 0.6.0
-      uuid: 3.3.2
+      uuid: 3.4.0
     deprecated: request has been deprecated, see https://github.com/request/request/issues/3142
     dev: true
     engines:
@@ -6757,7 +6770,6 @@ packages:
     resolution:
       integrity: sha512-JvdAWfbXeIGaZ9cILp38HntZSFSo3mWg6xGcJJsd+d4aRMOqauag1C63dJfDw7OaMYwEbHMOxEZ1lqVRYP2OAw==
   /setprototypeof/1.2.0:
-    dev: false
     resolution:
       integrity: sha512-E5LDX7Wrp85Kil5bhZv46j8jOeboKq5JMmYM3gVGdGH8xFpPWXUMsNrlODCrkoxMEeNi/XZIwuRvY4XNwYMJpw==
   /shebang-command/1.2.0:
@@ -7034,7 +7046,6 @@ packages:
     resolution:
       integrity: sha1-YICcOcv/VTNyJv1eC1IPNB8ftcY=
   /statuses/1.5.0:
-    dev: false
     engines:
       node: '>= 0.6'
     resolution:
@@ -7394,7 +7405,6 @@ packages:
     resolution:
       integrity: sha512-FWtleNAtZ/Ki2qtqej2CXTOayOH9bHDQF+Q48VpWyDXjbYxA4Yz8iDB31zXOBUlOHHKidDbqGVrTUvQMPmBGBw==
   /toidentifier/1.0.0:
-    dev: false
     engines:
       node: '>=0.6'
     resolution:
@@ -7454,7 +7464,6 @@ packages:
     resolution:
       integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==
   /tslib/2.1.0:
-    dev: true
     resolution:
       integrity: sha512-hcVC3wYEziELGGmEEXue7D75zbwIIVUMWAVbHItGPx0ziyXxrOMQx4rQEVEV45Ut/1IotuEvwqPopzIOkDMf0A==
   /tsscmp/1.0.6:
