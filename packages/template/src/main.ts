@@ -12,7 +12,8 @@ async function main() {
   app.use(cors())
   app.use(bodyParser())
 
-  const router = await mapAction('posts')
+  const actionModule = await import('./actions/posts')
+  const router = await mapAction('posts', actionModule)
 
   app.use(router.routes()).use(router.allowedMethods())
 

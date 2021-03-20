@@ -1,15 +1,22 @@
 import { mapAction, compile } from "thinly";
-import { join } from "path";
+import { join, basename, extname } from "path";
 
 export default function thinly() {
   return {
     name: "thinly",
 
     async transform() {
+      const actionPath = join(
+        process.cwd(),
+        "node_modules",
+        ".thinly",
+        "actions",
+        "posts.js"
+      );
+      const actionModule = require(actionPath);
+      const resourceName = basename(actionPath, extname(actionPath));
       const routers = {
-        posts: await mapAction(
-          join(process.cwd(), "node_modules", ".thinly", "actions", "posts.js")
-        ),
+        posts: await mapAction(resourceName, actionModule),
       };
 
       const actions = Object.entries(routers).reduce((acc, [key, router]) => {
