@@ -108,8 +108,6 @@ export default [
           dev ? 'development' : 'production',
         ),
       }),
-      // nodeResolve(),
-      // dynamicImportVars(),
       {
         name: 'thinly',
         async transform() {
