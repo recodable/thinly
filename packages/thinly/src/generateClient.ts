@@ -1,8 +1,8 @@
-import { factory, ClassElement, NodeArray } from 'typescript'
+import { factory, ClassElement, NodeArray } from "typescript";
 
 export function generateClient(
   members: readonly ClassElement[] = [],
-  delegators = [],
+  delegators = []
 ): NodeArray<any> {
   return factory.createNodeArray([
     factory.createImportDeclaration(
@@ -10,10 +10,10 @@ export function generateClient(
       undefined,
       factory.createImportClause(
         false,
-        factory.createIdentifier('axios'),
-        undefined,
+        factory.createIdentifier("axios"),
+        undefined
       ),
-      factory.createStringLiteral('axios'),
+      factory.createStringLiteral("axios")
     ),
     // factory.createImportDeclaration(
     //   undefined,
@@ -29,10 +29,10 @@ export function generateClient(
     factory.createClassDeclaration(
       undefined,
       [],
-      factory.createIdentifier('Client'),
+      factory.createIdentifier("Client"),
       undefined,
       undefined,
-      members,
+      members
     ),
 
     ...delegators,
@@ -44,10 +44,10 @@ export function generateClient(
       factory.createNamedExports([
         factory.createExportSpecifier(
           undefined,
-          factory.createIdentifier('Client'),
+          factory.createIdentifier("Client")
         ),
       ]),
-      undefined,
+      undefined
     ),
-  ])
+  ]);
 }

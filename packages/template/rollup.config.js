@@ -5,7 +5,21 @@ import run from '@rollup/plugin-run'
 import { nodeResolve } from '@rollup/plugin-node-resolve'
 import replace from '@rollup/plugin-replace'
 import thinly from 'rollup-plugin-thinly'
-import path from 'path'
+import multi from '@rollup/plugin-multi-entry'
+
+// const walkSync = function (dir, filelist) {
+//   var fs = fs || require('fs'),
+//     files = fs.readdirSync(dir)
+//   filelist = filelist || []
+//   files.forEach(function (file) {
+//     if (fs.statSync(dir + file).isDirectory()) {
+//       filelist = walkSync(dir + file + '/', filelist)
+//     } else {
+//       filelist.push(file)
+//     }
+//   })
+//   return filelist
+// }
 
 const dev = process.env.ROLLUP_WATCH === 'true'
 
@@ -33,14 +47,16 @@ export default [
     external: [...Object.keys(pkg.dependencies)],
   },
   {
-    input: 'src/actions/posts.ts',
+    input: 'src/actions/**/*.ts',
     output: {
-      file: './node_modules/.thinly/actions/posts.js',
+      dir: `./node_modules/.thinly/`,
       format: 'cjs',
       sourcemap: dev,
-      inlineDynamicImports: true,
     },
     plugins: [
+      multi({
+        entryFileName: 'actions.js',
+      }),
       replace({
         preventAssignment: true,
         'process.env.NODE_ENV': JSON.stringify(
@@ -61,12 +77,7 @@ export default [
       sourcemap: dev,
       inlineDynamicImports: true,
     },
-    plugins: [
-      thinly({
-        actionFile: 'posts',
-        thinlyDir: path.join(process.cwd(), 'node_modules', '.thinly'),
-      }),
-    ],
+    plugins: [thinly()],
     external: [...Object.keys(pkg.dependencies)],
   },
 ]

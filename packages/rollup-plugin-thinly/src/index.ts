@@ -1,27 +1,51 @@
 import { mapAction, compile } from "thinly";
-import { join, basename, extname } from "path";
+import { join } from "path";
+import { createFilter } from "@rollup/pluginutils";
+import type { FilterPattern } from "@rollup/pluginutils";
 
-export default function thinly() {
+export type ThinlyOptions = {
+  include?: FilterPattern;
+  exclude?: FilterPattern;
+};
+
+export default function thinly(options: ThinlyOptions = {}) {
+  const filter = createFilter(options.include, options.exclude);
+
   return {
     name: "thinly",
 
-    async transform() {
+    async transform(code, id) {
+      if (!filter(id)) return;
+
       const actionPath = join(
         process.cwd(),
         "node_modules",
         ".thinly",
-        "actions",
-        "posts.js"
+        "actions"
       );
-      const actionModule = require(actionPath);
-      const resourceName = basename(actionPath, extname(actionPath));
-      const routers = {
-        posts: await mapAction(resourceName, actionModule),
-      };
 
-      const actions = Object.entries(routers).reduce((acc, [key, router]) => {
-        return { ...acc, [key]: router.stack };
-      }, {});
+      const actionModule = await import(actionPath);
+
+      const routers = await Object.entries(actionModule).reduce(
+        async (prevPromise, [resourceName, actions]: [string, any]) => {
+          const acc = await prevPromise;
+          return {
+            ...acc,
+            [resourceName.toLowerCase()]: await mapAction(
+              resourceName.toLowerCase(),
+              actions.prototype
+            ),
+          };
+        },
+        {}
+      );
+
+      const actions = Object.entries(routers).reduce(
+        (acc, [key, router]: [string, any]) => {
+          return { ...acc, [key]: router.stack };
+        },
+        {}
+      );
 
       return {
         code: compile(actions),

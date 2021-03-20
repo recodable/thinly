@@ -1,4 +1,3 @@
-import { writeFile } from 'fs'
 import {
   factory,
   createSourceFile,
@@ -11,12 +10,12 @@ import {
   TemplateExpression,
   StringLiteral,
   NodeFlags,
-} from 'typescript'
-import { generateClient } from './generateClient'
-const startCase = require('lodash.startcase')
+} from "typescript";
+import { generateClient } from "./generateClient";
+const startCase = require("lodash.startcase");
 
 function getDelegateName(resourceName) {
-  return [...startCase(resourceName).split(' '), 'Delegate'].join('')
+  return [...startCase(resourceName).split(" "), "Delegate"].join("");
 }
 
 export function compile(actions) {
@@ -32,12 +31,12 @@ export function compile(actions) {
           factory.createBlock(
             [
               factory.createReturnStatement(
-                factory.createIdentifier(getDelegateName(resourceName)),
+                factory.createIdentifier(getDelegateName(resourceName))
               ),
             ],
-            true,
-          ),
-        )
+            true
+          )
+        );
       }),
     ],
     [
@@ -53,40 +52,40 @@ export function compile(actions) {
                   undefined,
                   factory.createObjectLiteralExpression(
                     routes.map(compileEndpoint),
-                    true,
-                  ),
+                    true
+                  )
                 ),
               ],
-              NodeFlags.Const,
-            ),
-          )
-        },
+              NodeFlags.Const
+            )
+          );
+        }
       ),
-    ],
-  )
+    ]
+  );
 
   const resultFile = createSourceFile(
-    'client.ts',
-    '',
+    "client.ts",
+    "",
     ScriptTarget.Latest,
     /*setParentNodes*/ false,
-    ScriptKind.TS,
-  )
+    ScriptKind.TS
+  );
 
-  const printer = createPrinter({ newLine: NewLineKind.LineFeed })
+  const printer = createPrinter({ newLine: NewLineKind.LineFeed });
 
-  const result = printer.printList(ListFormat.MultiLine, ast, resultFile)
+  const result = printer.printList(ListFormat.MultiLine, ast, resultFile);
 
   // writeFile('./dist/client.ts', result, (error) => {
   //   if (error) return console.log(error)
   //   console.log('Done!')
   // })
 
-  return result
+  return result;
 }
 
 function compileEndpoint(endpoint): MethodDeclaration {
-  const axiosMethod = findAxiosMethod(endpoint.methods)
+  const axiosMethod = findAxiosMethod(endpoint.methods);
 
   return factory.createMethodDeclaration(
     undefined,
@@ -101,19 +100,19 @@ function compileEndpoint(endpoint): MethodDeclaration {
           undefined,
           undefined,
           undefined,
-          factory.createIdentifier(name),
-        )
+          factory.createIdentifier(name)
+        );
       }),
-      ...(['post', 'patch'].includes(axiosMethod)
+      ...(["post", "patch"].includes(axiosMethod)
         ? [
             factory.createParameterDeclaration(
               undefined,
               undefined,
               undefined,
-              factory.createIdentifier('data'),
+              factory.createIdentifier("data"),
               undefined,
               undefined,
-              undefined,
+              undefined
             ),
           ]
         : []),
@@ -124,69 +123,69 @@ function compileEndpoint(endpoint): MethodDeclaration {
         factory.createReturnStatement(
           factory.createCallExpression(
             factory.createPropertyAccessExpression(
-              factory.createIdentifier('axios'),
-              factory.createIdentifier(axiosMethod),
+              factory.createIdentifier("axios"),
+              factory.createIdentifier(axiosMethod)
             ),
             undefined,
             [
               createTemplateExpressionFromURL(endpoint.path),
 
-              ...(['post', 'patch'].includes(axiosMethod)
-                ? [factory.createIdentifier('data')]
+              ...(["post", "patch"].includes(axiosMethod)
+                ? [factory.createIdentifier("data")]
                 : []),
-            ],
-          ),
+            ]
+          )
         ),
       ],
-      true,
-    ),
-  )
+      true
+    )
+  );
 }
 
 function findAxiosMethod(methods) {
-  if (methods.includes('GET')) {
-    return 'get'
+  if (methods.includes("GET")) {
+    return "get";
   }
 
-  if (methods.includes('POST')) {
-    return 'post'
+  if (methods.includes("POST")) {
+    return "post";
   }
 
-  if (methods.includes('PUT')) {
-    return 'put'
+  if (methods.includes("PUT")) {
+    return "put";
   }
 
-  if (methods.includes('PATCH')) {
-    return 'patch'
+  if (methods.includes("PATCH")) {
+    return "patch";
   }
 
-  if (methods.includes('DELETE')) {
-    return 'delete'
+  if (methods.includes("DELETE")) {
+    return "delete";
   }
 
-  throw new Error('method not supported')
+  throw new Error("method not supported");
 }
 
 function createTemplateExpressionFromURL(
-  path: string,
+  path: string
 ): TemplateExpression | StringLiteral {
-  let isDynamic = false
+  let isDynamic = false;
   const headStaticPath = path
-    .split('/')
+    .split("/")
     .filter((v) => v)
     .reduce((acc, part) => {
-      if (part.charAt(0) === ':') isDynamic = true
-      if (isDynamic) return acc
-      return `${acc}/${part}`
-    }, process.env.API_URL)
+      if (part.charAt(0) === ":") isDynamic = true;
+      if (isDynamic) return acc;
+      return `${acc}/${part}`;
+    }, process.env.API_URL);
 
   const dynamicParts = path
-    .split('/')
+    .split("/")
     .filter((v) => v)
-    .filter((part) => part.charAt(0) === ':')
+    .filter((part) => part.charAt(0) === ":");
 
   if (!isDynamic) {
-    return factory.createStringLiteral([process.env.API_URL, path].join(''))
+    return factory.createStringLiteral([process.env.API_URL, path].join(""));
   }
 
   return factory.createTemplateExpression(
@@ -196,9 +195,9 @@ function createTemplateExpressionFromURL(
         ...acc,
         factory.createTemplateSpan(
           factory.createIdentifier(part.slice(1)),
-          factory.createTemplateTail(''),
+          factory.createTemplateTail("")
         ),
-      ]
-    }, []),
-  )
+      ];
+    }, [])
+  );
 }

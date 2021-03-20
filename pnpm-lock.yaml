@@ -17,6 +17,7 @@ importers:
       '@rollup/plugin-node-resolve': 11.2.0_rollup@2.42.1
       '@rollup/plugin-replace': 2.4.1_rollup@2.42.1
       '@rollup/plugin-typescript': 8.2.0_ee8a5b503bb99b5988fcd60aad6d3c9a
+      '@rollup/pluginutils': 4.1.0_rollup@2.42.1
       '@types/node': 14.14.35
       rollup: 2.42.1
       tslib: 2.1.0
@@ -25,6 +26,7 @@ importers:
       '@rollup/plugin-node-resolve': ^11.2.0
       '@rollup/plugin-replace': ^2.4.1
       '@rollup/plugin-typescript': ^8.2.0
+      '@rollup/pluginutils': ^4.1.0
       '@types/node': ^14.14.35
       rollup: ^2.42.1
       thinly: workspace:^0.0.1
@@ -47,10 +49,12 @@ importers:
       '@recodable/prettier-config': 1.0.1
       '@rollup/plugin-commonjs': 17.1.0_rollup@2.42.1
       '@rollup/plugin-dynamic-import-vars': 1.1.1_rollup@2.42.1
+      '@rollup/plugin-multi-entry': 4.0.0_rollup@2.42.1
       '@rollup/plugin-node-resolve': 11.2.0_rollup@2.42.1
       '@rollup/plugin-replace': 2.4.1_rollup@2.42.1
       '@rollup/plugin-run': 2.0.2_rollup@2.42.1
       '@rollup/plugin-typescript': 8.2.0_ee8a5b503bb99b5988fcd60aad6d3c9a
+      '@rollup/pluginutils': 4.1.0_rollup@2.42.1
       '@types/node': 14.14.35
       prisma: 2.19.0
       rollup: 2.42.1
@@ -66,10 +70,12 @@ importers:
       '@recodable/prettier-config': ^1.0.1
       '@rollup/plugin-commonjs': ^17.1.0
       '@rollup/plugin-dynamic-import-vars': ^1.1.1
+      '@rollup/plugin-multi-entry': ^4.0.0
       '@rollup/plugin-node-resolve': ^11.2.0
       '@rollup/plugin-replace': ^2.4.1
       '@rollup/plugin-run': ^2.0.2
       '@rollup/plugin-typescript': ^8.2.0
+      '@rollup/pluginutils': ^4.1.0
       '@types/node': ^14.14.35
       axios: ^0.21.1
       dotenv: ^8.2.0
@@ -1265,6 +1271,18 @@ packages:
       rollup: ^1.20.0||^2.0.0
     resolution:
       integrity: sha512-PqdfEKlsyPx0hPSSuOigCHgrQbOLW+y09KRRCFeWiBBnkuh4LlV6mfrDefmLQijj8XCWzyLct2rK+q89qvRp7A==
+  /@rollup/plugin-multi-entry/4.0.0_rollup@2.42.1:
+    dependencies:
+      '@rollup/plugin-virtual': 2.0.3_rollup@2.42.1
+      matched: 5.0.1
+      rollup: 2.42.1
+    dev: true
+    engines:
+      node: '>=10.0.0'
+    peerDependencies:
+      rollup: ^1.20.0 || ^2.0.0
+    resolution:
+      integrity: sha512-1Sw86rwFxrNS7ECY3iSZ7T940xKnruNGpmQDgSDVTp+VTa1g5cPXNzBgp+IoOer41CiVeGFLwYwvicVoJLHEDQ==
   /@rollup/plugin-node-resolve/11.2.0_rollup@2.42.1:
     dependencies:
       '@rollup/pluginutils': 3.1.0_rollup@2.42.1
@@ -1318,6 +1336,14 @@ packages:
       typescript: '>=3.4.0'
     resolution:
       integrity: sha512-5DyVsb7L+ehLfNPu/nat8Gq3uJGzku4bMFPt90XahtgiSBf7z9YKPLqFUJKMT41W/mJ98SVGDPOhzikGrr/Lhg==
+  /@rollup/plugin-virtual/2.0.3_rollup@2.42.1:
+    dependencies:
+      rollup: 2.42.1
+    dev: true
+    peerDependencies:
+      rollup: ^1.20.0||^2.0.0
+    resolution:
+      integrity: sha512-pw6ziJcyjZtntQ//bkad9qXaBx665SgEL8C8KI5wO8G5iU5MPxvdWrQyVaAvjojGm9tJoS8M9Z/EEepbqieYmw==
   /@rollup/pluginutils/3.1.0_rollup@2.42.1:
     dependencies:
       '@types/estree': 0.0.39
@@ -1331,6 +1357,18 @@ packages:
       rollup: ^1.20.0||^2.0.0
     resolution:
       integrity: sha512-GksZ6pr6TpIjHm8h9lSQ8pi8BE9VeubNT0OMJ3B5uZJ8pz73NPiqOtCog/x2/QzM1ENChPKxMDhiQuRHsqc+lg==
+  /@rollup/pluginutils/4.1.0_rollup@2.42.1:
+    dependencies:
+      estree-walker: 2.0.2
+      picomatch: 2.2.2
+      rollup: 2.42.1
+    dev: true
+    engines:
+      node: '>= 8.0.0'
+    peerDependencies:
+      rollup: ^1.20.0||^2.0.0
+    resolution:
+      integrity: sha512-TrBhfJkFxA+ER+ew2U2/fHbebhLT/l/2pRk0hfj9KusXUuRXd2v0R58AfaZK9VXDQ4TogOSEmICVrQAA3zFnHQ==
   /@serverless/cli/1.5.2:
     dependencies:
       '@serverless/core': 1.1.2
@@ -5330,6 +5368,15 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha1-7Nyo8TFE5mDxtb1B8S80edmN+48=
+  /matched/5.0.1:
+    dependencies:
+      glob: 7.1.6
+      picomatch: 2.2.2
+    dev: true
+    engines:
+      node: '>=10'
+    resolution:
+      integrity: sha512-E1fhSTPRyhAlNaNvGXAgZQlq1hL0bgYMTk/6bktVlIhzUnX/SZs7296ACdVeNJE8xFNGSuvd9IpI7vSnmcqLvw==
   /media-typer/0.3.0:
     dev: false
     engines:
