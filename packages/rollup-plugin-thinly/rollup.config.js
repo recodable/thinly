@@ -10,5 +10,5 @@ export default {
     { file: pkg.module, format: "es" },
   ],
   plugins: [typescript()],
-  external: Object.keys(pkg.dependencies),
+  external: [...Object.keys(pkg.dependencies), "path"],
 };

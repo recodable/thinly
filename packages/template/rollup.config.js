@@ -9,8 +9,6 @@ import path from 'path'
 
 const dev = process.env.ROLLUP_WATCH === 'true'
 
-console.log(path.join(process.cwd(), 'node_modules', '.thinly'))
-
 export default [
   {
     input: 'src/main.ts',
@@ -34,48 +32,6 @@ export default [
     ],
     external: [...Object.keys(pkg.dependencies)],
   },
-  // {
-  //   input: 'src/mapAction.ts',
-  //   output: {
-  //     file: './node_modules/.thinly/mapAction.js',
-  //     format: 'cjs',
-  //     sourcemap: dev,
-  //     inlineDynamicImports: true,
-  //   },
-  //   plugins: [
-  //     replace({
-  //       preventAssignment: true,
-  //       'process.env.NODE_ENV': JSON.stringify(
-  //         dev ? 'development' : 'production',
-  //       ),
-  //     }),
-  //     nodeResolve(),
-  //     typescript(),
-  //     dynamicImportVars(),
-  //   ],
-  //   external: [...Object.keys(pkg.dependencies)],
-  // },
-  // {
-  //   input: 'src/compiler.ts',
-  //   output: {
-  //     file: './node_modules/.thinly/compiler.js',
-  //     format: 'cjs',
-  //     sourcemap: dev,
-  //     inlineDynamicImports: true,
-  //   },
-  //   plugins: [
-  //     replace({
-  //       preventAssignment: true,
-  //       'process.env.NODE_ENV': JSON.stringify(
-  //         dev ? 'development' : 'production',
-  //       ),
-  //     }),
-  //     nodeResolve(),
-  //     typescript(),
-  //     dynamicImportVars(),
-  //   ],
-  //   external: [...Object.keys(pkg.dependencies)],
-  // },
   {
     input: 'src/actions/posts.ts',
     output: {
@@ -106,17 +62,10 @@ export default [
       inlineDynamicImports: true,
     },
     plugins: [
-      // replace({
-      //   preventAssignment: true,
-      //   'process.env.NODE_ENV': JSON.stringify(
-      //     dev ? 'development' : 'production',
-      //   ),
-      // }),
       thinly({
         actionFile: 'posts',
         thinlyDir: path.join(process.cwd(), 'node_modules', '.thinly'),
       }),
-      // typescript(),
     ],
     external: [...Object.keys(pkg.dependencies)],
   },

@@ -149,6 +149,7 @@ importers:
       '@rollup/plugin-dynamic-import-vars': 1.1.1_rollup@2.42.1
       '@rollup/plugin-node-resolve': 11.2.0_rollup@2.42.1
       '@rollup/plugin-typescript': 8.2.0_ee8a5b503bb99b5988fcd60aad6d3c9a
+      '@types/node': 14.14.35
       lodash.startcase: 4.4.0
       rollup: 2.42.1
     specifiers:
@@ -156,6 +157,7 @@ importers:
       '@rollup/plugin-dynamic-import-vars': ^1.1.1
       '@rollup/plugin-node-resolve': ^11.2.0
       '@rollup/plugin-typescript': ^8.2.0
+      '@types/node': ^14.14.35
       lodash.startcase: ^4.4.0
       rollup: ^2.42.1
       tslib: ^2.1.0
