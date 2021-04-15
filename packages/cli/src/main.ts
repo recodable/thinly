@@ -7,6 +7,7 @@ import typescript from "@rollup/plugin-typescript";
 import virtual from "@rollup/plugin-virtual";
 import { promise as matched } from "matched";
 import { fork } from "child_process";
+import { compile } from "./compiler";
 
 const DEFAULT_OUTPUT = "multi-entry.js";
 // const AS_IMPORT = "import";
@@ -29,7 +30,7 @@ function thinly(conf: Partial<Config> = {}) {
 
   const exporter = (path) => {
     const [fileName] = basename(path).split(".");
-    return `import * as ${fileName} from ${JSON.stringify(path)}`;
+    return `import ${fileName} from ${JSON.stringify(path)}`;
   };
 
   const configure = (input) => {
@@ -94,23 +95,43 @@ function thinly(conf: Partial<Config> = {}) {
     },
 
     transform(code, id) {
-      if (id === `\x00virtual:${config.entryFileName}`) {
-        const ast = this.parse(code);
-        const names = ast.body
-          .filter((node) => node.type === "ImportDeclaration")
-          .map((node) => node.specifiers[0].local.name)
-          .filter((v) => v);
-
-        return [
-          code,
-          'const express = require("express");',
-          "const app = express();",
-          ...names.map((name) => {
-            return `app.get("/api/${name}", ${name}.get);`;
-          }),
-          "app.listen(3000, () => console.log('API running on http://localhost:3000'));",
-        ].join("\n");
-      }
+      return compile(code, id, {
+        isEntryFile: id === `\x00virtual:${config.entryFileName}`,
+        parse: this.parse,
+      });
+      // const ast = this.parse(code);
+      // if (id === `\x00virtual:${config.entryFileName}`) {
+      //   const names = ast.body
+      //     .filter((node) => node.type === "ImportDeclaration")
+      //     .map((node) => node.specifiers[0].local.name)
+      //     .filter((v) => v);
+      //   return [
+      //     code,
+      //     'const express = require("express");',
+      //     "const app = express();",
+      //     // ...names.map((name) => {
+      //     //   return `app.get("/api/${name}", ${name}.get);`;
+      //     // }),
+      //     "app.listen(3000, () => console.log('API running on http://localhost:3000'));",
+      //   ].join("\n");
+      // }
+      // console.log({ test: ast.body });
+      //   if (id === `\x00virtual:${config.entryFileName}`) {
+      //     const ast = this.parse(code);
+      //     const names = ast.body
+      //       .filter((node) => node.type === "ImportDeclaration")
+      //       .map((node) => node.specifiers[0].local.name)
+      //       .filter((v) => v);
+      //     return [
+      //       code,
+      //       'const express = require("express");',
+      //       "const app = express();",
+      //       ...names.map((name) => {
+      //         return `app.get("/api/${name}", ${name}.get);`;
+      //       }),
+      //       "app.listen(3000, () => console.log('API running on http://localhost:3000'));",
+      //     ].join("\n");
+      //   }
     },
   };
 }
@@ -119,9 +140,14 @@ async function build() {
   const routesDirPath = join(".", "src", "routes");
 
   const bundle = await rollup({
-    input: [join(routesDirPath, "**", "*.ts")],
+    input: [
+      join(routesDirPath, "**", "*.ts"),
+      join(routesDirPath, "**", "*.js"),
+    ],
 
-    plugins: [thinly(), typescript()],
+    plugins: [typescript(), thinly()],
+
+    external: ["express"],
   });
 
   // console.log(bundle);
@@ -132,6 +158,7 @@ async function build() {
 
   await bundle.write({
     file: "api/index.js",
+    format: "cjs",
   });
 
   await bundle.close();
