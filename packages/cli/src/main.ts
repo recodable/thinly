@@ -8,8 +8,12 @@ import virtual from "@rollup/plugin-virtual";
 import { promise as matched } from "matched";
 import { fork } from "child_process";
 import { compile } from "./compiler";
+import { isVirtual } from "./utils/isVirtual";
 
-const DEFAULT_OUTPUT = "multi-entry.js";
+const DEFAULT_INPUT = "multi-entry.js";
+const DEFAULT_API_OUTPUT = ".thinly/index.js";
+const DEFAULT_CLIENT_OUTPUT = "node_modules/.thinly";
+
 // const AS_IMPORT = "import";
 // const AS_EXPORT = "export * as x from";
 
@@ -19,11 +23,11 @@ type Config = {
   entryFileName: string;
 };
 
-function thinly(conf: Partial<Config> = {}) {
+function multi(conf: Partial<Config> = {}) {
   const config = {
     include: [],
     exclude: [],
-    entryFileName: DEFAULT_OUTPUT,
+    entryFileName: DEFAULT_INPUT,
     exports: true,
     ...conf,
   };
@@ -42,7 +46,7 @@ function thinly(conf: Partial<Config> = {}) {
       const {
         include = [],
         exclude = [],
-        entryFileName = DEFAULT_OUTPUT,
+        entryFileName = DEFAULT_INPUT,
         exports,
       } = input;
       config.include = include;
@@ -54,7 +58,7 @@ function thinly(conf: Partial<Config> = {}) {
   let virtualisedEntry;
 
   return {
-    name: "thinly",
+    name: "multi",
 
     options(options) {
       if (options.input !== config.entryFileName) {
@@ -94,58 +98,44 @@ function thinly(conf: Partial<Config> = {}) {
       return virtualisedEntry && virtualisedEntry.load(id);
     },
 
+    // transform(code, id) {
+    //   return compile(code, id, {
+    //     isEntryFile: id === `\x00virtual:${config.entryFileName}`,
+    //     parse: this.parse,
+    //   });
+    // },
+  };
+}
+
+function thinly(conf: Partial<Config> = {}) {
+  return {
+    name: "thinly",
+
     transform(code, id) {
       return compile(code, id, {
-        isEntryFile: id === `\x00virtual:${config.entryFileName}`,
+        isEntryFile: isVirtual(id),
         parse: this.parse,
       });
-      // const ast = this.parse(code);
-      // if (id === `\x00virtual:${config.entryFileName}`) {
-      //   const names = ast.body
-      //     .filter((node) => node.type === "ImportDeclaration")
-      //     .map((node) => node.specifiers[0].local.name)
-      //     .filter((v) => v);
-      //   return [
-      //     code,
-      //     'const express = require("express");',
-      //     "const app = express();",
-      //     // ...names.map((name) => {
-      //     //   return `app.get("/api/${name}", ${name}.get);`;
-      //     // }),
-      //     "app.listen(3000, () => console.log('API running on http://localhost:3000'));",
-      //   ].join("\n");
-      // }
-      // console.log({ test: ast.body });
-      //   if (id === `\x00virtual:${config.entryFileName}`) {
-      //     const ast = this.parse(code);
-      //     const names = ast.body
-      //       .filter((node) => node.type === "ImportDeclaration")
-      //       .map((node) => node.specifiers[0].local.name)
-      //       .filter((v) => v);
-      //     return [
-      //       code,
-      //       'const express = require("express");',
-      //       "const app = express();",
-      //       ...names.map((name) => {
-      //         return `app.get("/api/${name}", ${name}.get);`;
-      //       }),
-      //       "app.listen(3000, () => console.log('API running on http://localhost:3000'));",
-      //     ].join("\n");
-      //   }
     },
   };
 }
 
-async function build() {
-  const routesDirPath = join(".", "src", "routes");
+function thinlyClient() {
+  return {
+    name: "thinly-client",
+  };
+}
 
+const routesDirPath = join(".", "src", "routes");
+
+async function buildExpress() {
   const bundle = await rollup({
     input: [
       join(routesDirPath, "**", "*.ts"),
       join(routesDirPath, "**", "*.js"),
     ],
 
-    plugins: [typescript(), thinly()],
+    plugins: [typescript(), multi(), thinly()],
 
     external: ["express"],
   });
@@ -157,13 +147,36 @@ async function build() {
   // });
 
   await bundle.write({
-    file: "api/index.js",
+    file: DEFAULT_API_OUTPUT,
     format: "cjs",
   });
 
   await bundle.close();
 }
 
+async function buildClient() {
+  const bundle = await rollup({
+    input: [
+      join(routesDirPath, "**", "*.ts"),
+      join(routesDirPath, "**", "*.js"),
+    ],
+
+    plugins: [typescript(), multi(), thinlyClient()],
+  });
+
+  await bundle.write({
+    file: DEFAULT_CLIENT_OUTPUT,
+    format: "es",
+  });
+
+  await bundle.close();
+}
+
+async function build() {
+  await buildExpress();
+  await buildClient();
+}
+
 build().then(() => {
-  fork(join(process.cwd(), "api/index.js"));
+  fork(join(process.cwd(), DEFAULT_API_OUTPUT));
 });

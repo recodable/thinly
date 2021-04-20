@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "dev": "rollup -cw"
+    "dev": "thinly"
   },
   "devDependencies": {
     "@rollup/plugin-replace": "^2.4.2",
