@@ -139,7 +139,7 @@ async function buildExpress() {
 
     plugins: [typescript(), multi(), thinly()],
 
-    external: ["express"],
+    external: ["express", "body-parser"],
   });
 
   // console.log(bundle);

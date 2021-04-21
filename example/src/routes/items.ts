@@ -6,6 +6,6 @@ export function get(req: Request, res: Response) {
 }
 
 export function post(req: Request, res: Response) {
-  const { slug } = req.params;
+  const { slug } = req.body;
   res.end(`Item: ${slug}`);
 }

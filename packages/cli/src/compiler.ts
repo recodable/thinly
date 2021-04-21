@@ -18,7 +18,9 @@ export function compile(code: string, id: string, options: CompilerOptions) {
 
     return [
       'import express from "express"',
+      'import bodyParser from "body-parser"',
       "const app = express()",
+      "app.use(bodyParser.json())",
       code,
       ...names.map((name) => {
         return `app.use('/api/${name}', ${name})`;
