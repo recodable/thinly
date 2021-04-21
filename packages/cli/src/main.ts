@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { join, basename } from "path";
 import { existsSync } from "fs";
 import { rollup } from "rollup";
