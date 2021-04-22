@@ -5,28 +5,40 @@ import generate from "@babel/generator";
 export type CompilerOptions = {
   isEntryFile: boolean;
   parse: (string) => any;
+  production: boolean;
 };
 
 export function compile(code: string, id: string, options: CompilerOptions) {
+  const names = options
+    .parse(code)
+    .body.filter((node) => node.type === "ImportDeclaration")
+    .map((node) => node.specifiers[0].local.name)
+    .filter((v) => v);
+
   if (options.isEntryFile) {
-    const ast = options.parse(code);
-
-    const names = ast.body
-      .filter((node) => node.type === "ImportDeclaration")
-      .map((node) => node.specifiers[0].local.name)
-      .filter((v) => v);
-
     return [
+      !options.production && "require('dotenv').config()",
+
       'import express from "express"',
       'import bodyParser from "body-parser"',
+
       "const app = express()",
+
       "app.use(bodyParser.json())",
+
       code,
+
       ...names.map((name) => {
         return `app.use('/api/${name}', ${name})`;
       }),
-      "app.listen(3000, () => console.log('API running on http://localhost:3000'))",
-    ].join("\n");
+
+      !options.production &&
+        "app.listen(3000, () => console.log('API running on http://localhost:3000'))",
+
+      options.production && "module.exports = app",
+    ]
+      .filter((v) => v)
+      .join("\n");
   }
 
   const ast = parse(
@@ -41,7 +53,11 @@ export function compile(code: string, id: string, options: CompilerOptions) {
 
   traverse(ast, {
     ExportNamedDeclaration: (path) => {
-      const { name } = path.node.declaration.id;
+      const name = path?.node?.declaration?.id?.name;
+
+      if (!name || !["get", "put", "post", "delete", "patch"].includes(name)) {
+        return;
+      }
 
       console.log(`Mapping ${name.toUpperCase()} ${id}...`);
 
