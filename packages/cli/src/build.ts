@@ -208,7 +208,7 @@ type Options = {
 
 export async function build(options?: Options) {
   await buildExpress(options);
-  // await buildClient(options);
+  await buildClient(options);
 }
 
 export default function run() {
