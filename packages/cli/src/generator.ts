@@ -17,6 +17,8 @@ export function generate(code: string, id: string, options: CompilerOptions) {
 
   if (options.isEntryFile) {
     return [
+      "require('dotenv').config()",
+
       code,
 
       "export class ThinlyClient {",
@@ -92,7 +94,7 @@ export function generate(code: string, id: string, options: CompilerOptions) {
       return [
         ...acc,
         `${method}(data) {`,
-        `return axios.${method}('http://localhost:3000/api/login', data)`,
+        `return axios.${method}(process.env.API_URL + '/login', data)`,
         "}",
       ];
     }, []),
