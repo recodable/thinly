@@ -1,6 +1,11 @@
 importers:
   .:
-    specifiers: {}
+    devDependencies:
+      '@recodable/prettier-config': 1.0.1
+      prettier: 2.2.1
+    specifiers:
+      '@recodable/prettier-config': ^1.0.1
+      prettier: ^2.2.1
   packages/cli:
     dependencies:
       '@babel/generator': 7.13.9
@@ -153,6 +158,10 @@ packages:
       node: '>= 8'
     resolution:
       integrity: sha512-8Broas6vTtW4GIXTAHDoE32hnN2M5ykgCpWGbuXHQ15vEMqr23pB76e/GZcYsZCHALv50ktd24qhEyKr6wBtow==
+  /@recodable/prettier-config/1.0.1:
+    dev: true
+    resolution:
+      integrity: sha512-Q2wDM/HekzqVwa2I8OxYA4Ars2vpcFDKYme6jFduS/9hoQIXdE2AItpQZA0g1U52BYNBzJO41fD8lYpBypDjlg==
   /@rollup/plugin-replace/2.4.2_rollup@2.45.2:
     dependencies:
       '@rollup/pluginutils': 3.1.0_rollup@2.45.2
@@ -1332,6 +1341,13 @@ packages:
       node: '>=4'
     resolution:
       integrity: sha1-6SQ0v6XqjBn0HN/UAddBo8gZ2Jc=
+  /prettier/2.2.1:
+    dev: true
+    engines:
+      node: '>=10.13.0'
+    hasBin: true
+    resolution:
+      integrity: sha512-PqyhM2yCjg/oKkFPtTGUojv7gnZAoG80ttl45O6x2Ug/rMJw4wcc9k6aaf2hibP7BGVCCM33gZoGjyvt9mm16Q==
   /proxy-addr/2.0.6:
     dependencies:
       forwarded: 0.1.2

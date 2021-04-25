@@ -1,6 +1,11 @@
 {
+  "prettier": "@recodable/prettier-config",
   "scripts": {
     "example": "pnpm --filter ./example",
     "cli": "pnpm --filter ./packages/cli"
+  },
+  "devDependencies": {
+    "@recodable/prettier-config": "^1.0.1",
+    "prettier": "^2.2.1"
   }
 }
