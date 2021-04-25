@@ -6,6 +6,7 @@ export type CompilerOptions = {
   isEntryFile: boolean;
   parse: (string) => any;
   production: boolean;
+  routeDir: string;
 };
 
 export function compile(code: string, id: string, options: CompilerOptions) {
@@ -53,13 +54,15 @@ export function compile(code: string, id: string, options: CompilerOptions) {
 
   traverse(ast, {
     ExportNamedDeclaration: (path) => {
+      const [route] = id.replace(options.routeDir, "").split(".");
+
       const name = path?.node?.declaration?.id?.name;
 
       if (!name || !["get", "put", "post", "delete", "patch"].includes(name)) {
         return;
       }
 
-      console.log(`Mapping ${name.toUpperCase()} ${id}...`);
+      console.log(`Mapping ${name.toUpperCase()} ${route}...`);
 
       const { program } = parse(`router.${name}("/", ${name})`);
 

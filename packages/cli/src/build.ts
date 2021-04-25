@@ -122,6 +122,7 @@ function thinly(conf: Partial<Config> = {}) {
         isEntryFile: isVirtual(id),
         parse: this.parse,
         production: !!conf?.production,
+        routeDir: cfg.routeDir,
       });
     },
   };
