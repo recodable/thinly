@@ -15,6 +15,8 @@ import { generate } from "./generator";
 import copy from "rollup-plugin-copy";
 import { existsSync } from "fs";
 
+console.log(process.cwd());
+
 const pkg = require(join(process.cwd(), "package.json"));
 
 const defaultCfg = {
