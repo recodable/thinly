@@ -11,6 +11,8 @@ import {
   DEFAULT_CLIENT_OUTPUT,
 } from "./constants";
 
+const pkg = require(join(process.cwd(), "package.json"));
+
 // const AS_IMPORT = "import";
 // const AS_EXPORT = "export * as x from";
 
@@ -129,7 +131,7 @@ async function buildExpress(options?: Options) {
 
     plugins: [typescript(), multi(), thinly({ production: true, ...options })],
 
-    external: ["express", "body-parser"],
+    external: Object.keys(pkg.dependencies),
   });
 
   await bundle.write({
@@ -148,6 +150,8 @@ async function buildClient(options?: Options) {
     ],
 
     plugins: [typescript(), multi(), thinlyClient()],
+
+    external: Object.keys(pkg.dependencies),
   });
 
   await bundle.write({
