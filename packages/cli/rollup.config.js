@@ -13,5 +13,5 @@ export default {
 
   plugins: [typescript(), shebang(), executable()],
 
-  external: [...Object.keys(pkg.dependencies), "path"],
+  external: [...Object.keys(pkg.dependencies), "path", "child_process"],
 };

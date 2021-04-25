@@ -10,6 +10,7 @@ import {
   DEFAULT_API_OUTPUT,
   DEFAULT_CLIENT_OUTPUT,
 } from "./constants";
+import { generate } from "./generator";
 
 const pkg = require(join(process.cwd(), "package.json"));
 
@@ -114,9 +115,17 @@ function thinly(conf: Partial<Config> = {}) {
   };
 }
 
-function thinlyClient() {
+function thinlyClient(conf: Partial<Config> = {}) {
   return {
     name: "thinly-client",
+
+    transform(code, id) {
+      return generate(code, id, {
+        isEntryFile: isVirtual(id),
+        parse: this.parse,
+        production: !!conf?.production,
+      });
+    },
   };
 }
 
@@ -149,14 +158,18 @@ async function buildClient(options?: Options) {
       join(routesDirPath, "**", "*.js"),
     ],
 
-    plugins: [typescript(), multi(), thinlyClient()],
+    plugins: [
+      typescript(),
+      multi(),
+      thinlyClient({ production: true, ...options }),
+    ],
 
     external: Object.keys(pkg.dependencies),
   });
 
   await bundle.write({
     file: DEFAULT_CLIENT_OUTPUT,
-    format: "es",
+    format: "cjs",
   });
 
   await bundle.close();
