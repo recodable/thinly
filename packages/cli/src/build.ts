@@ -153,7 +153,6 @@ async function buildExpress(options?: Options) {
 }
 
 async function buildClient(options?: Options) {
-  console.log(__dirname);
   const bundle = await rollup({
     input: [
       join(routesDirPath, "**", "*.ts"),
