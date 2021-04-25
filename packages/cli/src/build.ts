@@ -11,6 +11,7 @@ import {
   DEFAULT_CLIENT_OUTPUT,
 } from "./constants";
 import { generate } from "./generator";
+import copy from "rollup-plugin-copy";
 
 const pkg = require(join(process.cwd(), "package.json"));
 
@@ -152,6 +153,7 @@ async function buildExpress(options?: Options) {
 }
 
 async function buildClient(options?: Options) {
+  console.log(__dirname);
   const bundle = await rollup({
     input: [
       join(routesDirPath, "**", "*.ts"),
@@ -162,13 +164,26 @@ async function buildClient(options?: Options) {
       typescript(),
       multi(),
       thinlyClient({ production: true, ...options }),
+      copy({
+        targets: [
+          {
+            src: join(__dirname, "package.json"),
+            dest: DEFAULT_CLIENT_OUTPUT,
+          },
+        ],
+      }),
     ],
 
     external: Object.keys(pkg.dependencies),
   });
 
   await bundle.write({
-    file: DEFAULT_CLIENT_OUTPUT,
+    file: join(DEFAULT_CLIENT_OUTPUT, "index-browser.js"),
+    format: "es",
+  });
+
+  await bundle.write({
+    file: join(DEFAULT_CLIENT_OUTPUT, "index.js"),
     format: "cjs",
   });
 
