@@ -6,7 +6,8 @@
   },
   "scripts": {
     "dev": "rollup -cw",
-    "build": "rollup -c"
+    "build": "rollup -c",
+    "prepublishOnly": "pnpm build"
   },
   "devDependencies": {
     "@rollup/plugin-replace": "^2.4.2",
