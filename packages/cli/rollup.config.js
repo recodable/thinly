@@ -16,15 +16,15 @@ export default {
     typescript(),
     shebang(),
     executable(),
-    // copy({
-    //   targets: [
-    //     {
-    //       src: "src/package-client.json",
-    //       dest: "dist",
-    //       rename: "package.json",
-    //     },
-    //   ],
-    // }),
+    copy({
+      targets: [
+        {
+          src: "src/package-client.json",
+          dest: "dist",
+          rename: "package.json",
+        },
+      ],
+    }),
   ],
 
   external: [...Object.keys(pkg.dependencies), "path", "child_process", "fs"],
