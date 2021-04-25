@@ -165,42 +165,42 @@ async function buildExpress(options?: Options) {
   await bundle.close();
 }
 
-// async function buildClient(options?: Options) {
-//   const bundle = await rollup({
-//     input: [
-//       join(routesDirPath, "**", "*.ts"),
-//       join(routesDirPath, "**", "*.js"),
-//     ],
+async function buildClient(options?: Options) {
+  const bundle = await rollup({
+    input: [
+      join(routesDirPath, "**", "*.ts"),
+      join(routesDirPath, "**", "*.js"),
+    ],
 
-//     plugins: [
-//       typescript(),
-//       multi(),
-//       thinlyClient({ production: true, ...options }),
-//       copy({
-//         targets: [
-//           {
-//             src: join(__dirname, "package.json"),
-//             dest: cfg.output,
-//           },
-//         ],
-//       }),
-//     ],
+    plugins: [
+      typescript(),
+      multi(),
+      thinlyClient({ production: true, ...options }),
+      copy({
+        targets: [
+          {
+            src: join(__dirname, "package.json"),
+            dest: cfg.output,
+          },
+        ],
+      }),
+    ],
 
-//     external: Object.keys(pkg.dependencies),
-//   });
+    external: Object.keys(pkg.dependencies),
+  });
 
-//   await bundle.write({
-//     file: join(cfg.output, "index-browser.js"),
-//     format: "es",
-//   });
+  await bundle.write({
+    file: join(cfg.output, "index-browser.js"),
+    format: "es",
+  });
 
-//   await bundle.write({
-//     file: join(cfg.output, "index.js"),
-//     format: "cjs",
-//   });
+  await bundle.write({
+    file: join(cfg.output, "index.js"),
+    format: "cjs",
+  });
 
-//   await bundle.close();
-// }
+  await bundle.close();
+}
 
 type Options = {
   production?: boolean;
@@ -208,7 +208,7 @@ type Options = {
 
 export async function build(options?: Options) {
   await buildExpress(options);
-  await buildClient(options);
+  // await buildClient(options);
 }
 
 export default function run() {
