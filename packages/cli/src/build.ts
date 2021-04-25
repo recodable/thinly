@@ -9,11 +9,17 @@ import {
   DEFAULT_INPUT,
   DEFAULT_API_OUTPUT,
   DEFAULT_CLIENT_OUTPUT,
+  CFG_FILENAME,
 } from "./constants";
 import { generate } from "./generator";
 import copy from "rollup-plugin-copy";
+import { existsSync } from "fs";
 
 const pkg = require(join(process.cwd(), "package.json"));
+
+const cfg = existsSync(CFG_FILENAME)
+  ? require(join(process.cwd(), CFG_FILENAME))
+  : { output: DEFAULT_CLIENT_OUTPUT };
 
 // const AS_IMPORT = "import";
 // const AS_EXPORT = "export * as x from";
@@ -167,7 +173,7 @@ async function buildClient(options?: Options) {
         targets: [
           {
             src: join(__dirname, "package.json"),
-            dest: DEFAULT_CLIENT_OUTPUT,
+            dest: cfg.output,
           },
         ],
       }),
@@ -177,12 +183,12 @@ async function buildClient(options?: Options) {
   });
 
   await bundle.write({
-    file: join(DEFAULT_CLIENT_OUTPUT, "index-browser.js"),
+    file: join(cfg.output, "index-browser.js"),
     format: "es",
   });
 
   await bundle.write({
-    file: join(DEFAULT_CLIENT_OUTPUT, "index.js"),
+    file: join(cfg.output, "index.js"),
     format: "cjs",
   });
 
