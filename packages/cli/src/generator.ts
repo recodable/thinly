@@ -6,6 +6,7 @@ export type CompilerOptions = {
   isEntryFile: boolean;
   parse: (string) => any;
   production: boolean;
+  routeDir: string;
 };
 
 export function generate(code: string, id: string, options: CompilerOptions) {
@@ -30,35 +31,6 @@ export function generate(code: string, id: string, options: CompilerOptions) {
       "}",
     ].join("\n");
   }
-
-  // const ast = parse(
-  //   [
-  //     'import { Router } from "express"',
-  //     "const router = Router()",
-  //     code,
-  //     "export default router",
-  //   ].join("\n"),
-  //   { sourceType: "module" }
-  // );
-
-  // traverse(ast, {
-  //   ExportNamedDeclaration: (path) => {
-  //     const name = path?.node?.declaration?.id?.name;
-
-  //     if (!name || !["get", "put", "post", "delete", "patch"].includes(name)) {
-  //       return;
-  //     }
-
-  //     console.log(`Mapping ${name.toUpperCase()} ${id}...`);
-
-  //     const { program } = parse(`router.${name}("/", ${name})`);
-
-  //     path.parentPath.node.body = [
-  //       ...path.parentPath.node.body,
-  //       ...program.body,
-  //     ];
-  //   },
-  // });
 
   const ast = parse([code, "export default {", "", "}"].join("\n"), {
     sourceType: "module",
@@ -87,6 +59,8 @@ export function generate(code: string, id: string, options: CompilerOptions) {
 
   // return generate(ast, {}, code);
 
+  const [route] = id.replace(options.routeDir, "").split(".");
+
   return [
     "import axios from 'axios'",
     "export default {",
@@ -94,7 +68,7 @@ export function generate(code: string, id: string, options: CompilerOptions) {
       return [
         ...acc,
         `${method}(data) {`,
-        `return axios.${method}(process.env.API_URL + '/login', data)`,
+        `return axios.${method}(process.env.API_URL + '${route}', data)`,
         "}",
       ];
     }, []),

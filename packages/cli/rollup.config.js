@@ -27,5 +27,5 @@ export default {
     }),
   ],
 
-  external: [...Object.keys(pkg.dependencies), "path", "child_process"],
+  external: [...Object.keys(pkg.dependencies), "path", "child_process", "fs"],
 };

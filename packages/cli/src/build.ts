@@ -17,9 +17,14 @@ import { existsSync } from "fs";
 
 const pkg = require(join(process.cwd(), "package.json"));
 
+const defaultCfg = {
+  output: DEFAULT_CLIENT_OUTPUT,
+  routeDir: join(process.cwd(), "src", "routes"),
+};
+
 const cfg = existsSync(CFG_FILENAME)
-  ? require(join(process.cwd(), CFG_FILENAME))
-  : { output: DEFAULT_CLIENT_OUTPUT };
+  ? { ...defaultCfg, ...require(join(process.cwd(), CFG_FILENAME)) }
+  : defaultCfg;
 
 // const AS_IMPORT = "import";
 // const AS_EXPORT = "export * as x from";
@@ -131,6 +136,7 @@ function thinlyClient(conf: Partial<Config> = {}) {
         isEntryFile: isVirtual(id),
         parse: this.parse,
         production: !!conf?.production,
+        routeDir: cfg.routeDir,
       });
     },
   };
