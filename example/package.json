@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "dev": "thinly"
+    "dev": "thinly dev",
+    "build": "thinly build"
   },
   "devDependencies": {
     "@rollup/plugin-replace": "^2.4.2",
@@ -9,13 +10,9 @@
     "@types/express": "^4.17.11",
     "@vercel/node": "^1.9.1",
     "rollup": "^2.45.2",
-    "tslib": "^2.2.0",
     "vercel": "^21.3.3"
   },
   "dependencies": {
-    "axios": "^0.21.1",
-    "body-parser": "^1.19.0",
-    "dotenv": "^8.2.0",
-    "express": "^4.17.1"
+    "thinly": "workspace:^0.0.10"
   }
 }
