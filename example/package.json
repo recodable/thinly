@@ -4,19 +4,10 @@
     "build": "thinly build"
   },
   "devDependencies": {
-    "@rollup/plugin-replace": "^2.4.2",
-    "@rollup/plugin-run": "^2.0.2",
-    "@rollup/plugin-typescript": "^8.2.1",
-    "@types/express": "^4.17.11",
-    "@vercel/node": "^1.9.1",
-    "rollup": "^2.45.2",
-    "tslib": "^2.2.0",
-    "vercel": "^21.3.3"
+    "@types/express": "^4.17.11"
   },
   "dependencies": {
-    "axios": "^0.21.1",
-    "body-parser": "^1.19.0",
-    "express": "^4.17.1",
+    "@thinly/validation": "workspace:^0.0.10",
     "thinly": "workspace:^0.0.10"
   }
 }

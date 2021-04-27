@@ -1,6 +1,9 @@
 {
   "compilerOptions": {
-    "target": "es5"
+    "target": "es5",
+    "resolveJsonModule": true,
+    "moduleResolution": "Node",
+    "allowSyntheticDefaultImports": true
   },
   "include": ["cli/main.ts"]
 }

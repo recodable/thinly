@@ -9,7 +9,15 @@
     "build": "rollup -c",
     "prepublishOnly": "pnpm build"
   },
+  "bundledDependencies": [
+    "express",
+    "dotenv",
+    "yup",
+    "axios",
+    "body-parser"
+  ],
   "devDependencies": {
+    "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-replace": "^2.4.2",
     "@types/express": "^4.17.11",
     "@vercel/node": "^1.9.1",
@@ -24,12 +32,16 @@
     "@babel/traverse": "^7.13.15",
     "@rollup/plugin-typescript": "^8.2.1",
     "@rollup/plugin-virtual": "^2.0.3",
+    "axios": "^0.21.1",
+    "body-parser": "^1.19.0",
     "commander": "^7.2.0",
     "dotenv": "^8.2.0",
+    "express": "^4.17.1",
     "matched": "^5.0.1",
     "rollup": "^2.45.2",
     "rollup-plugin-copy": "^3.4.0",
     "tslib": "^2.2.0",
-    "typescript": "^4.2.4"
+    "typescript": "^4.2.4",
+    "yup": "^0.32.9"
   }
 }

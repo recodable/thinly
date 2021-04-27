@@ -1,3 +1,5 @@
 packages:
   - example
   - packages
+  - packages/validation
+  - packages/db

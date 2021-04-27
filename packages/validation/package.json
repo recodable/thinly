@@ -1,0 +1,12 @@
+{
+  "name": "@thinly/validation",
+  "version": "0.0.10",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "bundledDependencies": [
+    "yup"
+  ],
+  "dependencies": {
+    "yup": "^0.32.9"
+  }
+}

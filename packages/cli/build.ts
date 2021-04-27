@@ -14,8 +14,9 @@ import {
 import { generate } from './generator'
 import copy from 'rollup-plugin-copy'
 import { existsSync } from 'fs'
+import pkg from '../package.json'
 
-const pkg = require(join(process.cwd(), 'package.json'))
+const targetPkg = require(join(process.cwd(), 'package.json'))
 
 const defaultCfg = {
   output: DEFAULT_CLIENT_OUTPUT,
@@ -152,7 +153,10 @@ async function buildServer(options?: Options) {
 
     plugins: [typescript(), multi(), thinly({ production: true, ...options })],
 
-    external: Object.keys(pkg.dependencies),
+    external: [
+      ...Object.keys(targetPkg.dependencies),
+      ...pkg.bundledDependencies,
+    ],
   })
 
   await bundle.write({
@@ -184,7 +188,10 @@ async function buildClient(options?: Options) {
       }),
     ],
 
-    external: Object.keys(pkg.dependencies),
+    external: [
+      ...Object.keys(targetPkg.dependencies),
+      ...pkg.bundledDependencies,
+    ],
   })
 
   await bundle.write({
