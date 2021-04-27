@@ -8,14 +8,22 @@ importers:
       prettier: ^2.2.1
   example:
     dependencies:
+      '@prisma/client': 2.21.2_prisma@2.21.2
       '@thinly/validation': link:../packages/validation
       thinly: link:../packages
     devDependencies:
       '@types/express': 4.17.11
+      prisma: 2.21.2
+      tslib: 2.2.0
+      typescript: 4.2.4
     specifiers:
+      '@prisma/client': ^2.21.2
       '@thinly/validation': workspace:^0.0.10
       '@types/express': ^4.17.11
+      prisma: ^2.21.2
       thinly: workspace:^0.0.10
+      tslib: ^2.2.0
+      typescript: ^4.2.4
   packages:
     dependencies:
       '@babel/generator': 7.13.9
@@ -1825,7 +1833,6 @@ packages:
     resolution:
       integrity: sha512-hPlt7ZACERQGf03M253ytLY3dHbGNGrAq9qIHWUY9XHYl1z7wYngSr3OQ5xmui8o2AaxsONxIzjafLUiWBo1Fg==
   /tslib/2.2.0:
-    dev: false
     resolution:
       integrity: sha512-gS9GVHRU+RGn5KQM2rllAlR3dU6m7AcpJKdtH8gFvQiC4Otgk98XnmMU+nZenHt/+VhnBPWwgrJsyrdcw6i23w==
   /type-fest/0.8.1:
@@ -1857,7 +1864,6 @@ packages:
     resolution:
       integrity: sha512-D/wqnB2xzNFIcoBG9FG8cXRDjiqSTbG2wd8DMZeQyJlP1vfTkIxH4GKveWaEBYySKIg+USu+E+EDIR47SqnaMQ==
   /typescript/4.2.4:
-    dev: false
     engines:
       node: '>=4.2.0'
     hasBin: true

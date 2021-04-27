@@ -52,22 +52,22 @@ export default [
     external: Object.keys(require('./validation/package.json').dependencies),
   },
 
-  {
-    input: 'db/index.ts',
+  // {
+  //   input: 'db/index.ts',
 
-    output: [
-      {
-        file: 'db/dist/index.js',
-        format: 'cjs',
-      },
-      {
-        file: 'db/dist/index.esm.js',
-        format: 'es',
-      },
-    ],
+  //   output: [
+  //     {
+  //       file: 'db/dist/index.js',
+  //       format: 'cjs',
+  //     },
+  //     {
+  //       file: 'db/dist/index.esm.js',
+  //       format: 'es',
+  //     },
+  //   ],
 
-    plugins: [typescript()],
+  //   plugins: [typescript()],
 
-    external: Object.keys(require('./db/package.json').dependencies),
-  },
+  //   external: Object.keys(require('./db/package.json').dependencies),
+  // },
 ]
