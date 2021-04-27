@@ -122,7 +122,7 @@ function thinly(conf: Partial<Config> = {}) {
         isEntryFile: isVirtual(id),
         parse: this.parse,
         production: !!conf?.production,
-        routeDir: cfg.routeDir,
+        routeDir: join(process.cwd(), cfg.routeDir),
       })
     },
   }
@@ -143,13 +143,11 @@ function thinlyClient(conf: Partial<Config> = {}) {
   }
 }
 
-const routesDirPath = join('.', 'src', 'routes')
-
 async function buildExpress(options?: Options) {
   const bundle = await rollup({
     input: [
-      join(routesDirPath, '**', '*.ts'),
-      join(routesDirPath, '**', '*.js'),
+      join(process.cwd(), cfg.routeDir, '**', '*.ts'),
+      join(process.cwd(), cfg.routeDir, '**', '*.js'),
     ],
 
     plugins: [typescript(), multi(), thinly({ production: true, ...options })],
@@ -168,8 +166,8 @@ async function buildExpress(options?: Options) {
 async function buildClient(options?: Options) {
   const bundle = await rollup({
     input: [
-      join(routesDirPath, '**', '*.ts'),
-      join(routesDirPath, '**', '*.js'),
+      join(process.cwd(), cfg.routeDir, '**', '*.ts'),
+      join(process.cwd(), cfg.routeDir, '**', '*.js'),
     ],
 
     plugins: [
