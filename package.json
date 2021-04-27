@@ -2,7 +2,8 @@
   "prettier": "@recodable/prettier-config",
   "scripts": {
     "example": "pnpm --filter ./example",
-    "cli": "pnpm --filter ./packages/cli"
+    "cli": "pnpm --filter ./packages/cli",
+    "format": "prettier --write --plugin-search-dir=. '**/*.{ts,tsx,js,jsx,css,html,svelte}'"
   },
   "devDependencies": {
     "@recodable/prettier-config": "^1.0.1",

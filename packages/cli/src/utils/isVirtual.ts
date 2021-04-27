@@ -1,3 +1,3 @@
 export function isVirtual(id): boolean {
-  return /\x00virtual:.*/.test(id);
+  return /\x00virtual:.*/.test(id)
 }

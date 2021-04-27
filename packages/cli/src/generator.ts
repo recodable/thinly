@@ -1,20 +1,20 @@
-import { parse } from "@babel/parser";
-import traverse from "@babel/traverse";
-import generate from "@babel/generator";
+import { parse } from '@babel/parser'
+import traverse from '@babel/traverse'
+import generate from '@babel/generator'
 
 export type CompilerOptions = {
-  isEntryFile: boolean;
-  parse: (string) => any;
-  production: boolean;
-  routeDir: string;
-};
+  isEntryFile: boolean
+  parse: (string) => any
+  production: boolean
+  routeDir: string
+}
 
 export function generate(code: string, id: string, options: CompilerOptions) {
   const names = options
     .parse(code)
-    .body.filter((node) => node.type === "ImportDeclaration")
+    .body.filter((node) => node.type === 'ImportDeclaration')
     .map((node) => node.specifiers[0].local.name)
-    .filter((v) => v);
+    .filter((v) => v)
 
   if (options.isEntryFile) {
     return [
@@ -22,31 +22,31 @@ export function generate(code: string, id: string, options: CompilerOptions) {
 
       code,
 
-      "export class ThinlyClient {",
+      'export class ThinlyClient {',
 
       ...names.reduce((acc, name) => {
-        return [...acc, `get ${name}() {`, `return ${name}`, "}"];
+        return [...acc, `get ${name}() {`, `return ${name}`, '}']
       }, []),
 
-      "}",
-    ].join("\n");
+      '}',
+    ].join('\n')
   }
 
-  const ast = parse([code, "export default {", "", "}"].join("\n"), {
-    sourceType: "module",
-  });
+  const ast = parse([code, 'export default {', '', '}'].join('\n'), {
+    sourceType: 'module',
+  })
 
-  let methods = [];
+  let methods = []
 
   traverse(ast, {
     ExportNamedDeclaration: (path) => {
-      const name = path?.node?.declaration?.id?.name;
+      const name = path?.node?.declaration?.id?.name
 
-      if (!name || !["get", "put", "post", "delete", "patch"].includes(name)) {
-        return;
+      if (!name || !['get', 'put', 'post', 'delete', 'patch'].includes(name)) {
+        return
       }
 
-      methods = [...methods, name];
+      methods = [...methods, name]
 
       // const { program } = parse(`router.${name}("/", ${name})`);
 
@@ -55,23 +55,23 @@ export function generate(code: string, id: string, options: CompilerOptions) {
       //     ...program.body,
       //   ];
     },
-  });
+  })
 
   // return generate(ast, {}, code);
 
-  const [route] = id.replace(options.routeDir, "").split(".");
+  const [route] = id.replace(options.routeDir, '').split('.')
 
   return [
     "import axios from 'axios'",
-    "export default {",
+    'export default {',
     ...methods.reduce((acc, method) => {
       return [
         ...acc,
         `${method}(data) {`,
         `return axios.${method}(process.env.API_URL + '${route}', data)`,
-        "}",
-      ];
+        '}',
+      ]
     }, []),
-    "}",
-  ].join("\n");
+    '}',
+  ].join('\n')
 }
