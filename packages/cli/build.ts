@@ -143,7 +143,7 @@ function thinlyClient(conf: Partial<Config> = {}) {
   }
 }
 
-async function buildExpress(options?: Options) {
+async function buildServer(options?: Options) {
   const bundle = await rollup({
     input: [
       join(process.cwd(), cfg.routeDir, '**', '*.ts'),
@@ -205,7 +205,7 @@ type Options = {
 }
 
 export async function build(options?: Options) {
-  await buildExpress(options)
+  await buildServer(options)
   await buildClient(options)
 }
 
