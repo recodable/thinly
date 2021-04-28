@@ -10,16 +10,22 @@ importers:
     dependencies:
       '@prisma/client': 2.21.2_prisma@2.21.2
       '@thinly/validation': link:../packages/validation
+      body-parser: 1.19.0
+      dotenv: 8.2.0
+      express: 4.17.1
       thinly: link:../packages
+      tslib: 2.2.0
     devDependencies:
       '@types/express': 4.17.11
       prisma: 2.21.2
-      tslib: 2.2.0
       typescript: 4.2.4
     specifiers:
       '@prisma/client': ^2.21.2
       '@thinly/validation': workspace:^0.0.10
       '@types/express': ^4.17.11
+      body-parser: ^1.19.0
+      dotenv: ^8.2.0
+      express: ^4.17.1
       prisma: ^2.21.2
       thinly: workspace:^0.0.10
       tslib: ^2.2.0
@@ -31,7 +37,10 @@ importers:
       '@babel/parser': 7.13.15
       '@babel/traverse': 7.13.15
       '@babel/types': 7.13.17
+      '@rollup/plugin-alias': 3.1.2_rollup@2.45.2
+      '@rollup/plugin-auto-install': 2.1.0_rollup@2.45.2
       '@rollup/plugin-multi-entry': 4.0.0_rollup@2.45.2
+      '@rollup/plugin-replace': 2.4.2_rollup@2.45.2
       '@rollup/plugin-typescript': 8.2.1_d21869dc49fccc93d6599238c3a50ee6
       '@rollup/plugin-virtual': 2.0.3_rollup@2.45.2
       axios: 0.21.1
@@ -48,7 +57,6 @@ importers:
       yup: 0.32.9
     devDependencies:
       '@rollup/plugin-json': 4.1.0_rollup@2.45.2
-      '@rollup/plugin-replace': 2.4.2_rollup@2.45.2
       '@types/babel__core': 7.1.14
       '@types/express': 4.17.11
       '@vercel/node': 1.10.0
@@ -62,6 +70,8 @@ importers:
       '@babel/parser': ^7.13.15
       '@babel/traverse': ^7.13.15
       '@babel/types': ^7.13.17
+      '@rollup/plugin-alias': ^3.1.2
+      '@rollup/plugin-auto-install': ^2.1.0
       '@rollup/plugin-json': ^4.1.0
       '@rollup/plugin-multi-entry': ^4.0.0
       '@rollup/plugin-replace': ^2.4.2
@@ -369,6 +379,25 @@ packages:
     dev: true
     resolution:
       integrity: sha512-Q2wDM/HekzqVwa2I8OxYA4Ars2vpcFDKYme6jFduS/9hoQIXdE2AItpQZA0g1U52BYNBzJO41fD8lYpBypDjlg==
+  /@rollup/plugin-alias/3.1.2_rollup@2.45.2:
+    dependencies:
+      rollup: 2.45.2
+      slash: 3.0.0
+    dev: false
+    engines:
+      node: '>=8.0.0'
+    peerDependencies:
+      rollup: ^1.20.0||^2.0.0
+    resolution:
+      integrity: sha512-wzDnQ6v7CcoRzS0qVwFPrFdYA4Qlr+ookA217Y2Z3DPZE1R8jrFNM3jvGgOf6o6DMjbnQIn5lCIJgHPe1Bt3uw==
+  /@rollup/plugin-auto-install/2.1.0_rollup@2.45.2:
+    dependencies:
+      rollup: 2.45.2
+    dev: false
+    peerDependencies:
+      rollup: ^1.20.0||^2.0.0
+    resolution:
+      integrity: sha512-c0oR8fkzzVVql27oLyqgzcidYpxqqkPcNd126LJneXepTw/6/1TEgCrn83BOFwrg/n4OcFAtHVtUMM0qkkj/ow==
   /@rollup/plugin-json/4.1.0_rollup@2.45.2:
     dependencies:
       '@rollup/pluginutils': 3.1.0_rollup@2.45.2
@@ -395,7 +424,7 @@ packages:
       '@rollup/pluginutils': 3.1.0_rollup@2.45.2
       magic-string: 0.25.7
       rollup: 2.45.2
-    dev: true
+    dev: false
     peerDependencies:
       rollup: ^1.20.0 || ^2.0.0
     resolution:
@@ -1495,7 +1524,6 @@ packages:
   /magic-string/0.25.7:
     dependencies:
       sourcemap-codec: 1.4.8
-    dev: true
     resolution:
       integrity: sha512-4CrMT5DOHTDk4HYDlzmwu4FVCcIYI8gauveasrdCu2IKIFOJ3f0v/8MDGJCDL9oD2ppz/Av1b0Nj345H9M+XIA==
   /make-dir/3.1.0:
@@ -1929,7 +1957,6 @@ packages:
     resolution:
       integrity: sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g==
   /sourcemap-codec/1.4.8:
-    dev: true
     resolution:
       integrity: sha512-9NykojV5Uih4lgo5So5dtw+f0JgJX30KCNI8gwhz2J9A15wD0Ml6tjHKwf6fTSa6fAdVBdZeNOs9eJ71qCk8vA==
   /statuses/1.5.0:
@@ -2065,6 +2092,7 @@ packages:
     resolution:
       integrity: sha512-hPlt7ZACERQGf03M253ytLY3dHbGNGrAq9qIHWUY9XHYl1z7wYngSr3OQ5xmui8o2AaxsONxIzjafLUiWBo1Fg==
   /tslib/2.2.0:
+    dev: false
     resolution:
       integrity: sha512-gS9GVHRU+RGn5KQM2rllAlR3dU6m7AcpJKdtH8gFvQiC4Otgk98XnmMU+nZenHt/+VhnBPWwgrJsyrdcw6i23w==
   /type-fest/0.8.1:

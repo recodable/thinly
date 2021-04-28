@@ -3,3 +3,4 @@ packages:
   - packages
   - packages/validation
   - packages/db
+  - packages/routes

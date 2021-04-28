@@ -3,7 +3,7 @@ import { rollup } from 'rollup'
 import typescript from '@rollup/plugin-typescript'
 import virtual from '@rollup/plugin-virtual'
 import { promise as matched } from 'matched'
-import { compile } from './compiler'
+// import { compile } from './compiler'
 import { isVirtual } from './utils/isVirtual'
 import {
   DEFAULT_INPUT,
@@ -18,17 +18,13 @@ import pkg from '../package.json'
 import multi from '@rollup/plugin-multi-entry'
 import { transformSync } from '@babel/core'
 import camelCase from 'lodash.camelcase'
+import { config } from './utils/config'
+import alias from '@rollup/plugin-alias'
+import auto from '@rollup/plugin-auto-install'
 
 const targetPkg = require(join(process.cwd(), 'package.json'))
 
-const defaultCfg = {
-  output: DEFAULT_CLIENT_OUTPUT,
-  routeDir: join(process.cwd(), 'src', 'routes'),
-}
-
-const cfg = existsSync(CFG_FILENAME)
-  ? { ...defaultCfg, ...require(join(process.cwd(), CFG_FILENAME)) }
-  : defaultCfg
+const cfg = config()
 
 // const AS_IMPORT = "import";
 // const AS_EXPORT = "export * as x from";
@@ -117,20 +113,20 @@ type Config = {
 //   }
 // }
 
-function thinly(conf: Partial<Config> = {}) {
-  return {
-    name: 'thinly',
+// function thinly(conf: Partial<Config> = {}) {
+//   return {
+//     name: 'thinly',
 
-    transform(code, id) {
-      return compile(code, id, {
-        isEntryFile: isVirtual(id),
-        parse: this.parse,
-        production: !!conf?.production,
-        routeDir: join(process.cwd(), cfg.routeDir),
-      })
-    },
-  }
-}
+//     transform(code, id) {
+//       return compile(code, id, {
+//         isEntryFile: isVirtual(id),
+//         parse: this.parse,
+//         production: !!conf?.production,
+//         routeDir: join(process.cwd(), cfg.routeDir),
+//       })
+//     },
+//   }
+// }
 
 function thinlyClient(conf: Partial<Config> = {}) {
   return {
@@ -164,32 +160,64 @@ async function bundleRoutes() {
           }
 
           const [route] = id
-            .replace(join(process.cwd(), cfg.routeDir, '/'), '')
+            .replace(join(process.cwd(), cfg.routeDir), '')
             .split('.')
 
           const name = camelCase(route)
 
+          let hasHandler = false
+
           return transformSync(code, {
             babelrcRoots: false,
             plugins: [
-              // ({ types: t }) => {
-              //   return {
-              //     visitor: {
-              //       ExportDefaultDeclaration(path, state) {
-              //         path.replaceWith(
-              //           t.exportNamedDeclaration(
-              //             t.variableDeclaration('const', [
-              //               t.variableDeclarator(
-              //                 t.identifier(name),
-              //                 t.cloneNode(path.node.declaration),
-              //               ),
-              //             ]),
-              //           ),
-              //         )
-              //       },
-              //     },
-              //   }
-              // },
+              ({ types: t }) => {
+                return {
+                  visitor: {
+                    Program: {
+                      exit: (path) => {
+                        path.node.body.push(
+                          t.exportNamedDeclaration(
+                            t.variableDeclaration('const', [
+                              t.variableDeclarator(
+                                t.identifier(name),
+                                t.objectExpression([
+                                  t.objectProperty(
+                                    t.identifier('path'),
+                                    t.stringLiteral(route),
+                                  ),
+                                  ...(hasHandler && [
+                                    t.objectProperty(
+                                      t.identifier('handler'),
+                                      t.identifier('handler'),
+                                    ),
+                                  ]),
+                                ]),
+                              ),
+                            ]),
+                          ),
+                        )
+                      },
+                    },
+
+                    ExportDefaultDeclaration: {
+                      enter: (path, state) => {
+                        // todo handle error if exported value is not a value handler
+
+                        hasHandler = true
+
+                        path.replaceWith(
+                          t.variableDeclaration('const', [
+                            t.variableDeclarator(
+                              t.identifier('handler'),
+                              t.cloneNode(path.node.declaration),
+                            ),
+                          ]),
+                        )
+                      },
+                    },
+                  },
+                }
+              },
             ],
           })
         },
@@ -212,7 +240,9 @@ async function bundleRoutes() {
 async function buildServer() {
   const bundle = await rollup({
     input: join(__dirname, '..', 'server/app.js'),
+
     plugins: [typescript()],
+
     external: [
       ...Object.keys(targetPkg.dependencies),
       ...pkg.bundledDependencies,
@@ -296,7 +326,7 @@ type Options = {
 
 export async function build(options?: Options) {
   await bundleRoutes()
-  // await buildServer()
+  await buildServer()
   // await buildServer(options)
   // await buildClient(options)
 }

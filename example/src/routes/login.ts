@@ -4,16 +4,14 @@ import validation from '@thinly/validation'
 
 const db = new PrismaClient()
 
-export default {
-  body: {
-    username: validation.string().required(),
-  },
+// export const body = {
+//   username: validation.string().required(),
+// }
 
-  handler: async (req: Request, res: Response) => {
-    const user = await db.user.findFirst({
-      where: { username: req.body.username },
-    })
+export default async (req: Request, res: Response) => {
+  const user = await db.user.findFirst({
+    where: { username: req.body.username },
+  })
 
-    res.send(user)
-  },
+  res.send(user)
 }
