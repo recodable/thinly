@@ -42,6 +42,8 @@ export function compile(code: string, id: string, options: CompilerOptions) {
       .join('\n')
   }
 
+  console.log(code)
+
   const ast = parse(
     [
       'import { Router } from "express"',
@@ -62,7 +64,7 @@ export function compile(code: string, id: string, options: CompilerOptions) {
         return
       }
 
-      console.log(`Mapping ${name.toUpperCase()} ${route}...`)
+      console.log(`${name.toUpperCase()} ${route}`)
 
       const { program } = parse(`router.${name}("/", ${name})`)
 

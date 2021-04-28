@@ -52,6 +52,25 @@ export default [
     external: Object.keys(require('./validation/package.json').dependencies),
   },
 
+  {
+    input: 'server/app.ts',
+
+    output: [
+      {
+        file: 'dist/server/app.js',
+        format: 'cjs',
+      },
+      {
+        file: 'dist/server/app.esm.js',
+        format: 'es',
+      },
+    ],
+
+    plugins: [typescript()],
+
+    external: [...Object.keys(pkg.dependencies), 'path', 'child_process', 'fs'],
+  },
+
   // {
   //   input: 'db/index.ts',
 
