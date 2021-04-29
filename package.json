@@ -1,0 +1,7 @@
+{
+  "prettier": "@recodable/prettier-config",
+  "devDependencies": {
+    "@recodable/prettier-config": "^1.0.1",
+    "prettier": "^2.2.1"
+  }
+}

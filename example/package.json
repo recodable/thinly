@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "dev": "thinly dev",
+    "build": "thinly build"
+  },
+  "dependencies": {
+    "thinly": "workspace:^0.0.11"
+  }
+}
