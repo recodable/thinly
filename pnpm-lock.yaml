@@ -92,14 +92,6 @@ importers:
       typescript: ^4.2.4
       vercel: ^21.3.3
       yup: ^0.32.9
-  packages/db:
-    dependencies:
-      '@prisma/client': 2.21.2_prisma@2.21.2
-    devDependencies:
-      prisma: 2.21.2
-    specifiers:
-      '@prisma/client': ^2.21.2
-      prisma: ^2.21.2
   packages/validation:
     dependencies:
       yup: 0.32.9

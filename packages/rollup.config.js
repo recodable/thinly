@@ -71,6 +71,25 @@ export default [
     external: [...Object.keys(pkg.dependencies), 'path', 'child_process', 'fs'],
   },
 
+  {
+    input: 'server/dev.ts',
+
+    output: [
+      {
+        file: 'dist/server/dev.js',
+        format: 'cjs',
+      },
+      {
+        file: 'dist/server/dev.esm.js',
+        format: 'es',
+      },
+    ],
+
+    plugins: [typescript()],
+
+    external: [...Object.keys(pkg.dependencies), 'path', 'child_process', 'fs'],
+  },
+
   // {
   //   input: 'db/index.ts',
 

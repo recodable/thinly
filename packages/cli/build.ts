@@ -14,11 +14,15 @@ import {
 import copy from 'rollup-plugin-copy'
 import { existsSync } from 'fs'
 import pkg from '../package.json'
-import multi from '@rollup/plugin-multi-entry'
+// import multi from '@rollup/plugin-multi-entry'
 import { transformSync } from '@babel/core'
 import camelCase from 'lodash.camelcase'
 import { config } from './utils/config'
+// import multi from './multi'
 import virtual from '@rollup/plugin-virtual'
+import traverse from '@babel/traverse'
+import { parse } from '@babel/parser'
+// import multi from '@rollup/plugin-multi-entry'
 
 const targetPkg = require(join(process.cwd(), 'package.json'))
 
@@ -34,7 +38,16 @@ type Config = {
   production: boolean
 }
 
-function customMulti(conf: Partial<Config> = {}) {
+function createRouteFromPath(path) {
+  const [route] = path.replace(join(process.cwd(), cfg.routeDir), '').split('.')
+  return route
+}
+
+function createNameFromPath(path) {
+  return camelCase(createRouteFromPath(path))
+}
+
+function multi(conf: Partial<Config> = {}) {
   const config = {
     include: [],
     exclude: [],
@@ -44,8 +57,7 @@ function customMulti(conf: Partial<Config> = {}) {
   }
 
   const exporter = (path) => {
-    const [fileName] = basename(path).split('.')
-    return `import ${fileName} from ${JSON.stringify(path)}`
+    return `import { ${createNameFromPath(path)} } from ${JSON.stringify(path)}`
   }
 
   const configure = (input) => {
@@ -149,19 +161,24 @@ async function bundleRoutes() {
     ],
     plugins: [
       typescript(),
-      multi({ exports: false }),
+      multi(),
       {
+        name: 'thinly-route',
+
         transform(code, id) {
           // Exit when the file is a virtual file from @rollup/plugin/multi-entry
           if (isVirtual(id)) {
             return code
           }
 
-          const [route] = id
-            .replace(join(process.cwd(), cfg.routeDir), '')
-            .split('.')
+          // const [route] = id
+          //   .replace(join(process.cwd(), cfg.routeDir), '')
+          //   .split('.')
 
-          const name = camelCase(route)
+          // const name = camelCase(route)
+
+          const route = createRouteFromPath(id)
+          const name = createNameFromPath(id)
 
           let hasHandler = false
 
@@ -220,6 +237,41 @@ async function bundleRoutes() {
           })
         },
       },
+      {
+        name: 'thinly',
+
+        transform(code, id) {
+          if (!isVirtual(id)) {
+            return code
+          }
+
+          const ast = parse(code, { sourceType: 'module' })
+
+          const names = []
+
+          traverse(ast, {
+            ImportSpecifier(path) {
+              names.push(path.node.imported.name)
+            },
+          })
+
+          return [
+            code,
+
+            "import express from 'express'",
+            "import bodyParser from 'body-parser'",
+
+            'const app = express()',
+            'app.use(bodyParser.json())',
+
+            ...names.reduce((acc, name) => {
+              return [...acc, `app.get('/api' + ${name}.path, ${name}.handler)`]
+            }, []),
+
+            'export default app',
+          ].join('\n')
+        },
+      },
     ],
 
     external: [
@@ -229,7 +281,7 @@ async function bundleRoutes() {
   })
 
   await bundle.write({
-    file: 'api/routes.js',
+    file: '.thinly/cache/routes.js',
     format: 'cjs',
   })
 
@@ -238,39 +290,44 @@ async function bundleRoutes() {
 
 async function buildServer() {
   const bundle = await rollup({
-    input: ['api/routes.js', join(__dirname, '..', 'server/app.js')],
+    // input: [
+    //   // '.thinly/cache/routes.js',
+    //   join(__dirname, '..', 'server/app.js'),
+    //   join(__dirname, '..', 'server/dev.js'),
+    // ],
+    input: join(__dirname, '..', 'server/app.js'),
 
     plugins: [
       typescript(),
-      multi(),
-      {
-        name: 'merge',
+      // multi(),
+      // {
+      //   name: 'merge',
 
-        transform(code, id) {
-          if (isVirtual(id)) {
-            // const names = this.parse(code)
-            //   .body.filter((node) => node.type === 'ImportDeclaration')
-            //   .map((node) => node.specifiers[0].local.name)
-            //   .filter((v) => v)
+      //   transform(code, id) {
+      //     if (isVirtual(id)) {
+      //       // const names = this.parse(code)
+      //       //   .body.filter((node) => node.type === 'ImportDeclaration')
+      //       //   .map((node) => node.specifiers[0].local.name)
+      //       //   .filter((v) => v)
 
-            return [
-              "require('dotenv').config()",
+      //       return [
+      //         "require('dotenv').config()",
 
-              code,
+      //         code,
 
-              // ...names.map((name) => {
-              //   return `app.use('/api/${name}', ${name})`
-              // }),
+      //         // ...names.map((name) => {
+      //         //   return `app.use('/api/${name}', ${name})`
+      //         // }),
 
-              "app.listen(3000, () => console.log('API running on http://localhost:3000'))",
+      //         "app.listen(3000, () => console.log('API running on http://localhost:3000'))",
 
-              'module.exports = app',
-            ]
-              .filter((v) => v)
-              .join('\n')
-          }
-        },
-      },
+      //         'module.exports = app',
+      //       ]
+      //         .filter((v) => v)
+      //         .join('\n')
+      //     }
+      //   },
+      // },
     ],
 
     external: [
@@ -356,7 +413,7 @@ type Options = {
 
 export async function build(options?: Options) {
   await bundleRoutes()
-  await buildServer()
+  // await buildServer()
   // await buildServer(options)
   // await buildClient(options)
 }
