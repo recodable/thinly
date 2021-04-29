@@ -3,10 +3,7 @@
     "target": "es5",
     "resolveJsonModule": true,
     "moduleResolution": "Node",
-    "allowSyntheticDefaultImports": true,
-    "paths": {
-      "@thinly/routes": ["./api/routes"]
-    }
+    "allowSyntheticDefaultImports": true
   },
   "include": ["cli/main.ts"]
 }

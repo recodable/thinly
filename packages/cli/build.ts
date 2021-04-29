@@ -1,7 +1,6 @@
 import { join, basename } from 'path'
 import { rollup } from 'rollup'
 import typescript from '@rollup/plugin-typescript'
-import virtual from '@rollup/plugin-virtual'
 import { promise as matched } from 'matched'
 // import { compile } from './compiler'
 import { isVirtual } from './utils/isVirtual'
@@ -11,7 +10,7 @@ import {
   DEFAULT_CLIENT_OUTPUT,
   CFG_FILENAME,
 } from './constants'
-import { generate } from './generator'
+// import { generate } from './generator'
 import copy from 'rollup-plugin-copy'
 import { existsSync } from 'fs'
 import pkg from '../package.json'
@@ -19,8 +18,7 @@ import multi from '@rollup/plugin-multi-entry'
 import { transformSync } from '@babel/core'
 import camelCase from 'lodash.camelcase'
 import { config } from './utils/config'
-import alias from '@rollup/plugin-alias'
-import auto from '@rollup/plugin-auto-install'
+import virtual from '@rollup/plugin-virtual'
 
 const targetPkg = require(join(process.cwd(), 'package.json'))
 
@@ -36,82 +34,82 @@ type Config = {
   production: boolean
 }
 
-// function multi(conf: Partial<Config> = {}) {
-//   const config = {
-//     include: [],
-//     exclude: [],
-//     entryFileName: DEFAULT_INPUT,
-//     exports: true,
-//     ...conf,
-//   }
+function customMulti(conf: Partial<Config> = {}) {
+  const config = {
+    include: [],
+    exclude: [],
+    entryFileName: DEFAULT_INPUT,
+    exports: true,
+    ...conf,
+  }
 
-//   const exporter = (path) => {
-//     const [fileName] = basename(path).split('.')
-//     return `import ${fileName} from ${JSON.stringify(path)}`
-//   }
+  const exporter = (path) => {
+    const [fileName] = basename(path).split('.')
+    return `import ${fileName} from ${JSON.stringify(path)}`
+  }
 
-//   const configure = (input) => {
-//     if (typeof input === 'string') {
-//       config.include = [input]
-//     } else if (Array.isArray(input)) {
-//       config.include = input
-//     } else {
-//       const {
-//         include = [],
-//         exclude = [],
-//         entryFileName = DEFAULT_INPUT,
-//         exports,
-//       } = input
-//       config.include = include
-//       config.exclude = exclude
-//       config.entryFileName = entryFileName
-//     }
-//   }
+  const configure = (input) => {
+    if (typeof input === 'string') {
+      config.include = [input]
+    } else if (Array.isArray(input)) {
+      config.include = input
+    } else {
+      const {
+        include = [],
+        exclude = [],
+        entryFileName = DEFAULT_INPUT,
+        exports,
+      } = input
+      config.include = include
+      config.exclude = exclude
+      config.entryFileName = entryFileName
+    }
+  }
 
-//   let virtualisedEntry
+  let virtualisedEntry
 
-//   return {
-//     name: 'multi',
+  return {
+    name: 'multi',
 
-//     options(options) {
-//       if (options.input !== config.entryFileName) {
-//         configure(options.input)
-//       }
-//       return {
-//         ...options,
-//         input: config.entryFileName,
-//       }
-//     },
+    options(options) {
+      if (options.input !== config.entryFileName) {
+        configure(options.input)
+      }
+      return {
+        ...options,
+        input: config.entryFileName,
+      }
+    },
 
-//     outputOptions(options) {
-//       return {
-//         ...options,
-//         entryFileNames: config.entryFileName,
-//       }
-//     },
+    outputOptions(options) {
+      return {
+        ...options,
+        entryFileNames: config.entryFileName,
+      }
+    },
 
-//     buildStart(options) {
-//       const patterns = config.include.concat(
-//         config.exclude.map((pattern) => `!${pattern}`),
-//       )
-//       const entries = patterns.length
-//         ? matched(patterns, { realpath: true }).then((paths) =>
-//             paths.map(exporter).join('\n'),
-//           )
-//         : Promise.resolve('')
+    buildStart(options) {
+      const patterns = config.include.concat(
+        config.exclude.map((pattern) => `!${pattern}`),
+      )
+      const entries = patterns.length
+        ? matched(patterns, { realpath: true }).then((paths) =>
+            paths.map(exporter).join('\n'),
+          )
+        : Promise.resolve('')
 
-//       virtualisedEntry = virtual({ [options.input]: entries })
-//     },
+      virtualisedEntry = virtual({ [options.input]: entries })
+    },
 
-//     resolveId(id, importer) {
-//       return virtualisedEntry && virtualisedEntry.resolveId(id, importer)
-//     },
+    resolveId(id, importer) {
+      return virtualisedEntry && virtualisedEntry.resolveId(id, importer)
+    },
 
-//     load(id) {
-//       return virtualisedEntry && virtualisedEntry.load(id)
-//     },
-//   }
-// }
+    load(id) {
+      return virtualisedEntry && virtualisedEntry.load(id)
+    },
+  }
+}
 
 // function thinly(conf: Partial<Config> = {}) {
 //   return {
@@ -128,20 +126,20 @@ type Config = {
 //   }
 // }
 
-function thinlyClient(conf: Partial<Config> = {}) {
-  return {
-    name: 'thinly-client',
+// function thinlyClient(conf: Partial<Config> = {}) {
+//   return {
+//     name: 'thinly-client',
 
-    transform(code, id) {
-      return generate(code, id, {
-        isEntryFile: isVirtual(id),
-        parse: this.parse,
-        production: !!conf?.production,
-        routeDir: join(process.cwd(), cfg.routeDir),
-      })
-    },
-  }
-}
+//     transform(code, id) {
+//       return generate(code, id, {
+//         isEntryFile: isVirtual(id),
+//         parse: this.parse,
+//         production: !!conf?.production,
+//         routeDir: join(process.cwd(), cfg.routeDir),
+//       })
+//     },
+//   }
+// }
 
 async function bundleRoutes() {
   const bundle = await rollup({
@@ -151,7 +149,7 @@ async function bundleRoutes() {
     ],
     plugins: [
       typescript(),
-      multi(),
+      multi({ exports: false }),
       {
         transform(code, id) {
           // Exit when the file is a virtual file from @rollup/plugin/multi-entry
@@ -200,7 +198,7 @@ async function bundleRoutes() {
                     },
 
                     ExportDefaultDeclaration: {
-                      enter: (path, state) => {
+                      enter: (path) => {
                         // todo handle error if exported value is not a value handler
 
                         hasHandler = true
@@ -223,6 +221,7 @@ async function bundleRoutes() {
         },
       },
     ],
+
     external: [
       ...Object.keys(targetPkg.dependencies),
       ...pkg.bundledDependencies,
@@ -239,9 +238,40 @@ async function bundleRoutes() {
 
 async function buildServer() {
   const bundle = await rollup({
-    input: join(__dirname, '..', 'server/app.js'),
+    input: ['api/routes.js', join(__dirname, '..', 'server/app.js')],
 
-    plugins: [typescript()],
+    plugins: [
+      typescript(),
+      multi(),
+      {
+        name: 'merge',
+
+        transform(code, id) {
+          if (isVirtual(id)) {
+            // const names = this.parse(code)
+            //   .body.filter((node) => node.type === 'ImportDeclaration')
+            //   .map((node) => node.specifiers[0].local.name)
+            //   .filter((v) => v)
+
+            return [
+              "require('dotenv').config()",
+
+              code,
+
+              // ...names.map((name) => {
+              //   return `app.use('/api/${name}', ${name})`
+              // }),
+
+              "app.listen(3000, () => console.log('API running on http://localhost:3000'))",
+
+              'module.exports = app',
+            ]
+              .filter((v) => v)
+              .join('\n')
+          }
+        },
+      },
+    ],
 
     external: [
       ...Object.keys(targetPkg.dependencies),
@@ -280,45 +310,45 @@ async function buildServer() {
 //   await bundle.close()
 // }
 
-async function buildClient(options?: Options) {
-  const bundle = await rollup({
-    input: [
-      join(process.cwd(), cfg.routeDir, '**', '*.ts'),
-      join(process.cwd(), cfg.routeDir, '**', '*.js'),
-    ],
+// async function buildClient(options?: Options) {
+//   const bundle = await rollup({
+//     input: [
+//       join(process.cwd(), cfg.routeDir, '**', '*.ts'),
+//       join(process.cwd(), cfg.routeDir, '**', '*.js'),
+//     ],
 
-    plugins: [
-      typescript(),
-      multi(),
-      thinlyClient({ production: true, ...options }),
-      copy({
-        targets: [
-          {
-            src: join(__dirname, 'package.json'),
-            dest: cfg.output,
-          },
-        ],
-      }),
-    ],
+//     plugins: [
+//       typescript(),
+//       multi(),
+//       thinlyClient({ production: true, ...options }),
+//       copy({
+//         targets: [
+//           {
+//             src: join(__dirname, 'package.json'),
+//             dest: cfg.output,
+//           },
+//         ],
+//       }),
+//     ],
 
-    external: [
-      ...Object.keys(targetPkg.dependencies),
-      ...pkg.bundledDependencies,
-    ],
-  })
+//     external: [
+//       ...Object.keys(targetPkg.dependencies),
+//       ...pkg.bundledDependencies,
+//     ],
+//   })
 
-  await bundle.write({
-    file: join(cfg.output, 'index-browser.js'),
-    format: 'es',
-  })
+//   await bundle.write({
+//     file: join(cfg.output, 'index-browser.js'),
+//     format: 'es',
+//   })
 
-  await bundle.write({
-    file: join(cfg.output, 'index.js'),
-    format: 'cjs',
-  })
+//   await bundle.write({
+//     file: join(cfg.output, 'index.js'),
+//     format: 'cjs',
+//   })
 
-  await bundle.close()
-}
+//   await bundle.close()
+// }
 
 type Options = {
   production?: boolean

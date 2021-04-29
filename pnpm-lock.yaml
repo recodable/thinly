@@ -37,8 +37,6 @@ importers:
       '@babel/parser': 7.13.15
       '@babel/traverse': 7.13.15
       '@babel/types': 7.13.17
-      '@rollup/plugin-alias': 3.1.2_rollup@2.45.2
-      '@rollup/plugin-auto-install': 2.1.0_rollup@2.45.2
       '@rollup/plugin-multi-entry': 4.0.0_rollup@2.45.2
       '@rollup/plugin-replace': 2.4.2_rollup@2.45.2
       '@rollup/plugin-typescript': 8.2.1_d21869dc49fccc93d6599238c3a50ee6
@@ -70,8 +68,6 @@ importers:
       '@babel/parser': ^7.13.15
       '@babel/traverse': ^7.13.15
       '@babel/types': ^7.13.17
-      '@rollup/plugin-alias': ^3.1.2
-      '@rollup/plugin-auto-install': ^2.1.0
       '@rollup/plugin-json': ^4.1.0
       '@rollup/plugin-multi-entry': ^4.0.0
       '@rollup/plugin-replace': ^2.4.2
@@ -379,25 +375,6 @@ packages:
     dev: true
     resolution:
       integrity: sha512-Q2wDM/HekzqVwa2I8OxYA4Ars2vpcFDKYme6jFduS/9hoQIXdE2AItpQZA0g1U52BYNBzJO41fD8lYpBypDjlg==
-  /@rollup/plugin-alias/3.1.2_rollup@2.45.2:
-    dependencies:
-      rollup: 2.45.2
-      slash: 3.0.0
-    dev: false
-    engines:
-      node: '>=8.0.0'
-    peerDependencies:
-      rollup: ^1.20.0||^2.0.0
-    resolution:
-      integrity: sha512-wzDnQ6v7CcoRzS0qVwFPrFdYA4Qlr+ookA217Y2Z3DPZE1R8jrFNM3jvGgOf6o6DMjbnQIn5lCIJgHPe1Bt3uw==
-  /@rollup/plugin-auto-install/2.1.0_rollup@2.45.2:
-    dependencies:
-      rollup: 2.45.2
-    dev: false
-    peerDependencies:
-      rollup: ^1.20.0||^2.0.0
-    resolution:
-      integrity: sha512-c0oR8fkzzVVql27oLyqgzcidYpxqqkPcNd126LJneXepTw/6/1TEgCrn83BOFwrg/n4OcFAtHVtUMM0qkkj/ow==
   /@rollup/plugin-json/4.1.0_rollup@2.45.2:
     dependencies:
       '@rollup/pluginutils': 3.1.0_rollup@2.45.2
