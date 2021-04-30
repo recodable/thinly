@@ -4,6 +4,7 @@ import typescript from '@rollup/plugin-typescript'
 import multi from '@rollup/plugin-multi-entry'
 import camelCase from 'lodash.camelcase'
 import { transformSync } from '@babel/core'
+import pkg from '../package.json'
 
 function isVirtual(id): boolean {
   return /\x00virtual:.*/.test(id)
@@ -28,7 +29,7 @@ export default async function bundleRoutes() {
       typescript(),
       multi(),
       {
-        name: 'thinly-route',
+        name: 'thinly-routes',
 
         transform(code, id) {
           // Exit when the file is a virtual file from @rollup/plugin/multi-entry
@@ -46,6 +47,7 @@ export default async function bundleRoutes() {
           const name = createNameFromPath(id)
 
           let hasHandler = false
+          let namedExports = []
 
           return transformSync(code, {
             babelrcRoots: false,
@@ -71,6 +73,12 @@ export default async function bundleRoutes() {
                                       t.identifier('handler'),
                                     ),
                                   ]),
+                                  ...namedExports.map((name) => {
+                                    return t.objectProperty(
+                                      t.identifier(name),
+                                      t.identifier(name),
+                                    )
+                                  }),
                                 ]),
                               ),
                             ]),
@@ -95,6 +103,22 @@ export default async function bundleRoutes() {
                         )
                       },
                     },
+
+                    ExportNamedDeclaration: {
+                      enter: (path) => {
+                        if (t.isFunctionDeclaration(path.node.declaration)) {
+                          namedExports.push(path.node.declaration.id.name)
+                        }
+
+                        if (t.isVariableDeclaration(path.node.declaration)) {
+                          path.node.declaration.declarations.forEach(({ id }) =>
+                            namedExports.push(id.name),
+                          )
+                        }
+
+                        path.replaceWith(path.node.declaration)
+                      },
+                    },
                   },
                 }
               },
@@ -104,10 +128,7 @@ export default async function bundleRoutes() {
       },
     ],
 
-    external: [
-      // ...Object.keys(targetPkg.dependencies),
-      // ...pkg.bundledDependencies,
-    ],
+    external: [...Object.keys(pkg.dependencies)],
   })
 
   const { output } = await bundle.generate({

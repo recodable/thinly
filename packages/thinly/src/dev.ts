@@ -1,9 +1,9 @@
 import { rollup } from 'rollup'
 import typescript from '@rollup/plugin-typescript'
 import { join } from 'path'
-import commonjs from '@rollup/plugin-commonjs'
 import bundleRoutes from './bundleRoutes'
 import virtual from '@rollup/plugin-virtual'
+import pkg from '../package.json'
 
 export default async () => {
   const [routes] = await bundleRoutes()
@@ -13,7 +13,6 @@ export default async () => {
 
     plugins: [
       typescript(),
-      commonjs(),
       virtual({
         routes: `
           ${routes.code}
@@ -22,7 +21,7 @@ export default async () => {
       }),
     ],
 
-    external: [],
+    external: [...Object.keys(pkg.dependencies), 'path'],
   })
 
   await bundle.write({
