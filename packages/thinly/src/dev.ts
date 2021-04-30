@@ -13,6 +13,7 @@ export default async () => {
 
     plugins: [
       typescript(),
+
       virtual({
         routes: `
           ${routes.code}

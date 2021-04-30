@@ -1,6 +1,7 @@
 import express from 'express'
 import bodyParser from 'body-parser'
 import { basename } from 'path'
+// import type { Route } from './types'
 
 // @ts-ignore
 import routes from 'routes'
@@ -8,11 +9,6 @@ import routes from 'routes'
 const app = express()
 
 app.use(bodyParser.json())
-
-// type Route = {
-//   path: string
-//   handler: (req, res, next) => any
-// }
 
 Object.values(routes).map((route) => {
   let method = 'get'
@@ -28,6 +24,7 @@ Object.values(routes).map((route) => {
   }
 
   console.log(`${method.toUpperCase()} ${route.path}`)
+
   app[method]('/api' + route.path, (req, res, next) => {
     let valid = true
 
