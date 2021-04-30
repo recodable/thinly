@@ -1,4 +1,4 @@
-import { join } from 'path'
+import { join, basename } from 'path'
 import rollup from 'rollup'
 import typescript from '@rollup/plugin-typescript'
 import multi from '@rollup/plugin-multi-entry'
@@ -8,15 +8,6 @@ import pkg from '../package.json'
 
 function isVirtual(id): boolean {
   return /\x00virtual:.*/.test(id)
-}
-
-function createRouteFromPath(path) {
-  const [route] = path.replace(join(process.cwd(), 'routes'), '').split('.')
-  return route
-}
-
-function createNameFromPath(path) {
-  return camelCase(createRouteFromPath(path))
 }
 
 export type Hooks = {
@@ -69,8 +60,21 @@ export default async function bundleRoutes(options: Options = {}) {
 
           // const name = camelCase(route)
 
-          const route = createRouteFromPath(id)
-          const name = createNameFromPath(id)
+          let [route] = id.replace(join(process.cwd(), 'routes'), '').split('.')
+
+          const name = camelCase(route)
+
+          let method = 'get'
+
+          if (
+            ['get', 'post', 'put', 'patch', 'delete'].includes(basename(route))
+          ) {
+            const parts = route.split('/')
+
+            method = parts.pop().toLowerCase()
+
+            route = parts.join('/')
+          }
 
           let hasHandler = false
           let namedExports = []
@@ -93,12 +97,19 @@ export default async function bundleRoutes(options: Options = {}) {
                                     t.identifier('path'),
                                     t.stringLiteral(route),
                                   ),
+
+                                  t.objectProperty(
+                                    t.identifier('method'),
+                                    t.stringLiteral(method),
+                                  ),
+
                                   ...(hasHandler && [
                                     t.objectProperty(
                                       t.identifier('handler'),
                                       t.identifier('handler'),
                                     ),
                                   ]),
+
                                   ...namedExports.map((name) => {
                                     return t.objectProperty(
                                       t.identifier(name),

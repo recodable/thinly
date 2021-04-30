@@ -11,21 +11,11 @@ const app = express()
 app.use(bodyParser.json())
 
 Object.values(routes).map((route) => {
-  let method = 'get'
-
-  if (
-    ['get', 'post', 'put', 'patch', 'delete'].includes(basename(route.path))
-  ) {
-    const parts = route.path.split('/')
-
-    method = parts.pop().toLowerCase()
-
-    route.path = parts.join('/')
+  if (process.env.NODE_ENV === 'development') {
+    console.log(`${route.method.toUpperCase()} ${route.path}`)
   }
 
-  console.log(`${method.toUpperCase()} ${route.path}`)
-
-  app[method]('/api' + route.path, (req, res, next) => {
+  app[route.method]('/api' + route.path, (req, res, next) => {
     let valid = true
 
     if (route.validate) {
