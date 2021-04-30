@@ -1,8 +1,9 @@
 import express from 'express'
 import bodyParser from 'body-parser'
+import { basename } from 'path'
+
 // @ts-ignore
 import routes from 'routes'
-import { basename } from 'path'
 
 const app = express()
 
@@ -38,7 +39,7 @@ Object.values(routes).map((route) => {
       return res.status(422).send({ errors: ['invalid data'] })
     }
 
-    route.handler(req, res, next)
+    return route.handler(req, res, next)
   })
 })
 
