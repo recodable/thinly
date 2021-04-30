@@ -1,5 +1,5 @@
 import { join } from 'path'
-import { rollup } from 'rollup'
+import rollup from 'rollup'
 import typescript from '@rollup/plugin-typescript'
 import multi from '@rollup/plugin-multi-entry'
 import camelCase from 'lodash.camelcase'
@@ -19,12 +19,38 @@ function createNameFromPath(path) {
   return camelCase(createRouteFromPath(path))
 }
 
-export default async function bundleRoutes() {
-  const bundle = await rollup({
+export type Hooks = {
+  started?: () => any
+  bundled?: (output) => any
+}
+
+export type Options = {
+  watch?: boolean
+  hooks?: Hooks
+}
+
+const defaultOptions = {
+  watch: false,
+  hooks: {},
+}
+
+export default async function bundleRoutes(options: Options = {}) {
+  options = {
+    ...defaultOptions,
+    ...options,
+  }
+
+  const watcher = await rollup.watch({
     input: [
       join(process.cwd(), 'routes', '**', '*.ts'),
       join(process.cwd(), 'routes', '**', '*.js'),
     ],
+
+    output: {
+      file: '.thinly/routes.js',
+      format: 'cjs',
+    },
+
     plugins: [
       typescript(),
       multi(),
@@ -131,12 +157,43 @@ export default async function bundleRoutes() {
     external: [...Object.keys(pkg.dependencies)],
   })
 
-  const { output } = await bundle.generate({
-    file: '.thinly/routes.js',
-    format: 'cjs',
+  watcher.on('event', async (event) => {
+    if (event.code === 'START') {
+      console.log('compiling...')
+
+      if (options.hooks.started) {
+        options.hooks.started()
+      }
+    }
+
+    if (event.code === 'BUNDLE_END') {
+      const { output } = await event.result.generate({
+        file: '.thinly/routes.js',
+        format: 'cjs',
+      })
+
+      if (options.hooks.bundled) {
+        options.hooks.bundled(output)
+      }
+    }
+
+    if (event.code === 'END' && !options.watch) {
+      watcher.close()
+    }
   })
 
-  await bundle.close()
+  watcher.on('event', ({ result }) => {
+    if (result) {
+      result.close()
+    }
+  })
 
-  return output
+  // const { output } = await bundle.generate({
+  //   file: '.thinly/routes.js',
+  //   format: 'cjs',
+  // })
+
+  // await bundle.close()
+
+  // return output
 }

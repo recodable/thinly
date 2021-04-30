@@ -6,33 +6,55 @@ import virtual from '@rollup/plugin-virtual'
 import pkg from '../package.json'
 
 export default async () => {
-  const [routes] = await bundleRoutes()
+  let server
 
-  const bundle = await rollup({
-    input: join(__dirname, '..', '..', 'src/server.ts'),
+  await bundleRoutes({
+    watch: true,
 
-    plugins: [
-      typescript(),
+    hooks: {
+      started: () => {
+        if (server) {
+          server.close()
+        }
+      },
 
-      virtual({
-        routes: `
-          ${routes.code}
-          export default { ${routes.exports} }
-        `,
-      }),
-    ],
+      bundled: async (output) => {
+        const [routes] = output
 
-    external: [...Object.keys(pkg.dependencies), 'path'],
+        const bundle = await rollup({
+          input: join(__dirname, '..', '..', 'src/server.ts'),
+
+          plugins: [
+            typescript(),
+
+            virtual({
+              routes: `
+              ${routes.code}
+              export default { ${routes.exports} }
+            `,
+            }),
+          ],
+
+          external: [...Object.keys(pkg.dependencies), 'path'],
+        })
+
+        await bundle.write({
+          file: '.thinly/index.js',
+          format: 'cjs',
+        })
+
+        await bundle.close()
+
+        const bundledOuput = process.cwd() + '/.thinly/index.js'
+
+        delete require.cache[bundledOuput]
+
+        const app = require(bundledOuput)
+
+        server = app.listen(3000, () =>
+          console.log('API running on http://localhost:3000'),
+        )
+      },
+    },
   })
-
-  await bundle.write({
-    file: '.thinly/index.js',
-    format: 'cjs',
-  })
-
-  await bundle.close()
-
-  const app = require(process.cwd() + '/.thinly/index.js')
-
-  app.listen(3000, () => console.log('API running on http://localhost:3000'))
 }
