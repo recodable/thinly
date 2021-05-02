@@ -1,6 +1,6 @@
 import express from 'express'
 import bodyParser from 'body-parser'
-import { basename } from 'path'
+import cors from 'cors'
 // import type { Route } from './types'
 
 // @ts-ignore
@@ -10,7 +10,8 @@ const app = express()
 
 app.use(bodyParser.json())
 
-Object.values(routes).map((route) => {
+app.use(cors())
+
   if (process.env.NODE_ENV === 'development') {
     console.log(`${route.method.toUpperCase()} ${route.path}`)
   }
