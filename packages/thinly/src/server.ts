@@ -12,11 +12,12 @@ app.use(bodyParser.json())
 
 app.use(cors())
 
+Object.values(routes).map((route: Route) => {
   if (process.env.NODE_ENV === 'development') {
     console.log(`${route.method.toUpperCase()} ${route.path}`)
   }
 
-  app[route.method]('/api' + route.path, (req, res, next) => {
+  app[route.method]('/api' + route.path, async (req, res, next) => {
     let valid = true
 
     if (route.validate) {
@@ -27,7 +28,9 @@ app.use(cors())
       return res.status(422).send({ errors: ['invalid data'] })
     }
 
-    return route.handler(req, res, next)
+    const result = await route.handler(req)
+
+    res.send(result)
   })
 })
 
