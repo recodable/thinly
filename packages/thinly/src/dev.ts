@@ -40,6 +40,7 @@ async function buildServer(routes) {
       }),
 
       replace({
+        preventAssignment: true,
         'process.env.NODE_ENV': JSON.stringify('development'),
       }),
     ],
@@ -50,6 +51,7 @@ async function buildServer(routes) {
   await bundle.write({
     file: '.thinly/index.js',
     format: 'cjs',
+    exports: 'auto',
   })
 
   await bundle.close()
@@ -70,6 +72,7 @@ async function buildClient(routes) {
       }),
 
       replace({
+        preventAssignment: true,
         'process.env.NODE_ENV': JSON.stringify('development'),
       }),
     ],
