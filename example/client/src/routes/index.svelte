@@ -1,11 +1,7 @@
 <script>
-  import { ThinlyClient } from '../../.thinly/client'
-  import { API_URL } from '../env'
+  import client from '../client'
 
-  const client = new ThinlyClient()
-
-  // @ts-ignore
-  client.hello({})
+  client.loginPost()
 </script>
 
 <h1>Welcome to SvelteKit</h1>

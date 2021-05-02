@@ -12,7 +12,7 @@ app.use(bodyParser.json())
 
 app.use(cors())
 
-Object.values(routes).map((route: Route) => {
+Object.values(routes).map((route) => {
   if (process.env.NODE_ENV === 'development') {
     console.log(`${route.method.toUpperCase()} ${route.path}`)
   }

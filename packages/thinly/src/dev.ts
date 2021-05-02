@@ -6,6 +6,25 @@ import virtual from '@rollup/plugin-virtual'
 import pkg from '../package.json'
 import replace from '@rollup/plugin-replace'
 
+export type ClientOptions = {
+  output: string
+}
+
+export type Options = {
+  client: ClientOptions
+}
+
+const defaultConfig: Options = {
+  client: {
+    output: '.thinly/client.js',
+  },
+}
+
+const config: Options = {
+  ...defaultConfig,
+  ...require(join(process.cwd(), 'thinly.config.js')),
+}
+
 async function buildServer(routes) {
   const bundle = await rollup({
     input: join(__dirname, '..', '..', 'src/server.ts'),
@@ -59,7 +78,7 @@ async function buildClient(routes) {
   })
 
   await bundle.write({
-    file: '.thinly/client.js',
+    file: config.client.output,
     format: 'es',
   })
 
