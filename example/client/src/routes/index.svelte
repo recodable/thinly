@@ -1,10 +1,17 @@
 <script>
   import client from '../client'
 
-  client.loginPost()
+  let formData = { username: '', password: '' }
+
+  function submit() {
+    return client.loginPost(formData)
+  }
 </script>
 
-<h1>Welcome to SvelteKit</h1>
-<p>
-  Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation
-</p>
+<!-- <p style="color: red;">Invalid password</p> -->
+<form on:submit|preventDefault={submit}>
+  <input bind:value={formData.username} type="text" name="username" />
+  <input bind:value={formData.password} type="password" name="password" />
+
+  <button type="submit">Login</button>
+</form>

@@ -1,4 +1,5 @@
 import axios from 'axios'
+import validation from '@thinly/validation'
 
 // @ts-ignore
 import routes from 'routes'
@@ -8,11 +9,18 @@ export function createClient({ env }) {
 
   Object.entries(routes).forEach(([name, route]) => {
     client[name] = (data) => {
-      if (!route.validate || route.validate(data)) {
+      if (!route.validationSchema) {
         return axios[route.method](env.API_URL + route.path, data)
       }
 
-      console.log('failed')
+      const schema = validation.object().shape(route.validationSchema)
+
+      return schema
+        .validate(data)
+        .then((validatedData) => {
+          return axios[route.method](env.API_URL + route.path, validatedData)
+        })
+        .catch(console.log)
     }
   })
 
