@@ -1,14 +1,13 @@
 import validation from '@thinly/validation'
+import { PrismaClient } from '@prisma/client'
 
-// export function validationSchema(body) {
-//   return body.password === 'password'
-// }
+const prisma = new PrismaClient()
+
 export const validationSchema = {
-  username: validation.string().min(3).required(),
+  email: validation.string().email().required(),
   password: validation.string().required(),
 }
 
-export default (req) => {
-  // res.send('Login page')
-  return 'Login page'
+export default async (req) => {
+  return await prisma.user.findFirst({ where: { email: req.body.email } })
 }
