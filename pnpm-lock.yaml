@@ -26,7 +26,7 @@ importers:
       axios: 0.21.1
       thinly: link:../../packages/thinly
     devDependencies:
-      '@sveltejs/kit': 1.0.0-next.96_svelte@3.37.0+vite@2.2.3
+      '@sveltejs/kit': 1.0.0-next.99_svelte@3.37.0+vite@2.2.3
       svelte: 3.37.0
       svelte-preprocess: 4.7.2_svelte@3.37.0+typescript@4.2.4
       tslib: 2.2.0
@@ -451,8 +451,8 @@ packages:
       picomatch: 2.2.3
     dev: true
 
-  /@sveltejs/kit/1.0.0-next.96_svelte@3.37.0+vite@2.2.3:
-    resolution: {integrity: sha512-SKJCqA80YFz9n/uY/w8XJPd+ADTHO3n3iy8jshI3uCpkGjjyWpu1aaLcVlmCpIYdSq+OxpT9WJuTXqmKx0St9w==}
+  /@sveltejs/kit/1.0.0-next.99_svelte@3.37.0+vite@2.2.3:
+    resolution: {integrity: sha512-eLVo8/fE6DrNFRCx4fLU2MKolVhMPHlBkhA04kpsNaojC6PW9kW9w7DEpeK5WCYYzxhirvmABsUyw37pQfjZVA==}
     engines: {node: '>= 12.17.0'}
     hasBin: true
     peerDependencies:
