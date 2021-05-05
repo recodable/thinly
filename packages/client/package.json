@@ -1,0 +1,7 @@
+{
+  "name": "@thinly/client",
+  "version": "0.0.10",
+  "main": "index.js",
+  "module": "index.esm.js",
+  "types": "index.d.ts"
+}
