@@ -1,7 +1,7 @@
 import validation from '@thinly/validation'
-import { PrismaClient } from '@prisma/client'
+// import { PrismaClient } from '@prisma/client'
 
-const prisma = new PrismaClient()
+// const prisma = new PrismaClient()
 
 export const validationSchema = {
   email: validation.string().email().required(),
@@ -9,5 +9,6 @@ export const validationSchema = {
 }
 
 export default async (req) => {
-  return await prisma.user.findFirst({ where: { email: req.body.email } })
+  return 'login'
+  // return await prisma.user.findFirst({ where: { email: req.body.email } })
 }

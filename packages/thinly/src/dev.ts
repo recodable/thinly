@@ -5,6 +5,8 @@ import bundleRoutes from './bundleRoutes'
 import virtual from '@rollup/plugin-virtual'
 import pkg from '../package.json'
 import replace from '@rollup/plugin-replace'
+import ts, { createSourceFile, factory, createPrinter } from 'typescript'
+import { writeFileSync } from 'fs'
 
 export type ClientOptions = {
   output: string
@@ -16,7 +18,7 @@ export type Options = {
 
 const defaultConfig: Options = {
   client: {
-    output: '.thinly/client.js',
+    output: '.thinly/client',
   },
 }
 
@@ -81,11 +83,83 @@ async function buildClient(routes) {
   })
 
   await bundle.write({
-    file: config.client.output,
+    file: join(config.client.output, 'index.js'),
     format: 'es',
   })
 
   await bundle.close()
+}
+
+async function buildClientTypes(routes) {
+  const resultFile = createSourceFile(
+    'index.d.ts',
+    '',
+    ts.ScriptTarget.Latest,
+    /*setParentNodes*/ false,
+    ts.ScriptKind.TS,
+  )
+
+  const printer = createPrinter({ newLine: ts.NewLineKind.LineFeed })
+
+  const ast = factory.createNodeArray([
+    factory.createModuleDeclaration(
+      undefined,
+      [factory.createModifier(ts.SyntaxKind.DeclareKeyword)],
+      factory.createStringLiteral('@thinly/client'),
+      factory.createModuleBlock([
+        factory.createInterfaceDeclaration(
+          undefined,
+          undefined,
+          factory.createIdentifier('Client'),
+          undefined,
+          undefined,
+          routes.exports.map((name) => {
+            return factory.createMethodSignature(
+              undefined,
+              factory.createIdentifier(name),
+              undefined,
+              undefined,
+              [],
+              factory.createTypeReferenceNode(
+                factory.createIdentifier('Promise'),
+                [factory.createKeywordTypeNode(ts.SyntaxKind.AnyKeyword)],
+              ),
+            )
+          }),
+        ),
+        factory.createVariableStatement(
+          undefined,
+          factory.createVariableDeclarationList(
+            [
+              factory.createVariableDeclaration(
+                factory.createIdentifier('client'),
+                undefined,
+                factory.createTypeReferenceNode(
+                  factory.createIdentifier('Client'),
+                  undefined,
+                ),
+                undefined,
+              ),
+            ],
+            ts.NodeFlags.Const |
+              ts.ModifierFlags.Ambient |
+              ts.NodeFlags.ContextFlags,
+          ),
+        ),
+        factory.createExportAssignment(
+          undefined,
+          undefined,
+          true,
+          factory.createIdentifier('client'),
+        ),
+      ]),
+      ts.ModifierFlags.Ambient | ts.NodeFlags.ContextFlags,
+    ),
+  ])
+
+  const result = printer.printList(ts.ListFormat.MultiLine, ast, resultFile)
+
+  writeFileSync(join(config.client.output, 'index.d.ts'), result)
 }
 
 export default async () => {
@@ -116,7 +190,21 @@ export default async () => {
           console.log('API running on http://localhost:3000'),
         )
 
-        await buildClient(routes)
+        await bundleRoutes({
+          watch: true,
+
+          exclude: ['handler'],
+
+          hooks: {
+            bundled: async (output) => {
+              const [routes] = output
+
+              await buildClient(routes)
+
+              await buildClientTypes(routes)
+            },
+          },
+        })
       },
     },
   })

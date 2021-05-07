@@ -18,11 +18,13 @@ export type Hooks = {
 export type Options = {
   watch?: boolean
   hooks?: Hooks
+  exclude?: string[]
 }
 
 const defaultOptions = {
   watch: false,
   hooks: {},
+  exclude: [],
 }
 
 export default async function bundleRoutes(options: Options = {}) {
@@ -103,12 +105,13 @@ export default async function bundleRoutes(options: Options = {}) {
                                     t.stringLiteral(method),
                                   ),
 
-                                  ...(hasHandler && [
-                                    t.objectProperty(
-                                      t.identifier('handler'),
-                                      t.identifier('handler'),
-                                    ),
-                                  ]),
+                                  ...(hasHandler &&
+                                    !options.exclude.includes('handler') && [
+                                      t.objectProperty(
+                                        t.identifier('handler'),
+                                        t.identifier('handler'),
+                                      ),
+                                    ]),
 
                                   ...namedExports.map((name) => {
                                     return t.objectProperty(

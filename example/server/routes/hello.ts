@@ -1,5 +1,5 @@
 export function validate() {
-  return true
+  return false
 }
 
 export default async (req) => {
