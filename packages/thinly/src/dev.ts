@@ -182,12 +182,14 @@ async function buildClientTypes(routes) {
               ),
             ],
             ts.NodeFlags.Const |
-              ts.NodeFlags.Ambient |
+              ts.ModifierFlags.Ambient |
               ts.NodeFlags.ContextFlags,
           ),
         ),
       ]),
-      ts.NodeFlags.Namespace | ts.NodeFlags.Ambient | ts.NodeFlags.ContextFlags,
+      ts.NodeFlags.Namespace |
+        ts.ModifierFlags.Ambient |
+        ts.NodeFlags.ContextFlags,
     ),
     factory.createExportAssignment(
       undefined,
