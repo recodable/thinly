@@ -1,3 +1,3 @@
-const thinly = require('.thinly/client')
+const thinly = require('./.cache')
 
 module.exports = thinly

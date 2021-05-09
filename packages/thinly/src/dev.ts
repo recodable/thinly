@@ -84,6 +84,11 @@ async function buildClient(routes) {
 
   await bundle.write({
     file: join(config.client.output, 'index.js'),
+    format: 'cjs',
+  })
+
+  await bundle.write({
+    file: join(config.client.output, 'index.esm.js'),
     format: 'es',
   })
 
@@ -105,7 +110,7 @@ async function buildClientTypes(routes) {
     factory.createModuleDeclaration(
       undefined,
       [factory.createModifier(ts.SyntaxKind.DeclareKeyword)],
-      factory.createStringLiteral('@thinly/client'),
+      factory.createIdentifier('thinly'),
       factory.createModuleBlock([
         factory.createInterfaceDeclaration(
           undefined,
@@ -127,35 +132,126 @@ async function buildClientTypes(routes) {
             )
           }),
         ),
+        factory.createTypeAliasDeclaration(
+          undefined,
+          undefined,
+          factory.createIdentifier('Options'),
+          undefined,
+          factory.createTypeLiteralNode([
+            factory.createPropertySignature(
+              undefined,
+              factory.createIdentifier('env'),
+              undefined,
+              factory.createTypeLiteralNode([
+                factory.createPropertySignature(
+                  undefined,
+                  factory.createIdentifier('API_URL'),
+                  undefined,
+                  factory.createKeywordTypeNode(ts.SyntaxKind.StringKeyword),
+                ),
+              ]),
+            ),
+          ]),
+        ),
         factory.createVariableStatement(
           undefined,
           factory.createVariableDeclarationList(
             [
               factory.createVariableDeclaration(
-                factory.createIdentifier('client'),
+                factory.createIdentifier('createClient'),
                 undefined,
-                factory.createTypeReferenceNode(
-                  factory.createIdentifier('Client'),
+                factory.createFunctionTypeNode(
                   undefined,
+                  [
+                    factory.createParameterDeclaration(
+                      undefined,
+                      undefined,
+                      undefined,
+                      factory.createIdentifier('Options'),
+                      undefined,
+                      undefined,
+                      undefined,
+                    ),
+                  ],
+                  factory.createTypeReferenceNode(
+                    factory.createIdentifier('Client'),
+                    undefined,
+                  ),
                 ),
                 undefined,
               ),
             ],
             ts.NodeFlags.Const |
-              ts.ModifierFlags.Ambient |
+              ts.NodeFlags.Ambient |
               ts.NodeFlags.ContextFlags,
           ),
         ),
-        factory.createExportAssignment(
-          undefined,
-          undefined,
-          true,
-          factory.createIdentifier('client'),
-        ),
       ]),
-      ts.ModifierFlags.Ambient | ts.NodeFlags.ContextFlags,
+      ts.NodeFlags.Namespace | ts.NodeFlags.Ambient | ts.NodeFlags.ContextFlags,
+    ),
+    factory.createExportAssignment(
+      undefined,
+      undefined,
+      true,
+      factory.createIdentifier('thinly'),
     ),
   ])
+
+  // const ast = factory.createNodeArray([
+  //   factory.createModuleDeclaration(
+  //     undefined,
+  //     [factory.createModifier(ts.SyntaxKind.DeclareKeyword)],
+  //     factory.createStringLiteral('@thinly/client'),
+  //     factory.createModuleBlock([
+  //       factory.createInterfaceDeclaration(
+  //         undefined,
+  //         undefined,
+  //         factory.createIdentifier('Client'),
+  //         undefined,
+  //         undefined,
+  //         routes.exports.map((name) => {
+  //           return factory.createMethodSignature(
+  //             undefined,
+  //             factory.createIdentifier(name),
+  //             undefined,
+  //             undefined,
+  //             [],
+  //             factory.createTypeReferenceNode(
+  //               factory.createIdentifier('Promise'),
+  //               [factory.createKeywordTypeNode(ts.SyntaxKind.AnyKeyword)],
+  //             ),
+  //           )
+  //         }),
+  //       ),
+  //       factory.createVariableStatement(
+  //         undefined,
+  //         factory.createVariableDeclarationList(
+  //           [
+  //             factory.createVariableDeclaration(
+  //               factory.createIdentifier('client'),
+  //               undefined,
+  //               factory.createTypeReferenceNode(
+  //                 factory.createIdentifier('Client'),
+  //                 undefined,
+  //               ),
+  //               undefined,
+  //             ),
+  //           ],
+  //           ts.NodeFlags.Const |
+  //             ts.ModifierFlags.Ambient |
+  //             ts.NodeFlags.ContextFlags,
+  //         ),
+  //       ),
+  //       factory.createExportAssignment(
+  //         undefined,
+  //         undefined,
+  //         true,
+  //         factory.createIdentifier('client'),
+  //       ),
+  //     ]),
+  //     ts.ModifierFlags.Ambient | ts.NodeFlags.ContextFlags,
+  //   ),
+  // ])
 
   const result = printer.printList(ts.ListFormat.MultiLine, ast, resultFile)
 

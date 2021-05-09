@@ -1,5 +1,5 @@
 import axios from 'axios'
-import validation from '@thinly/validation'
+import * as validation from '@thinly/validation'
 
 // @ts-ignore
 import routes from 'routes'

@@ -3,5 +3,13 @@
   "version": "0.0.10",
   "main": "index.js",
   "module": "index.esm.js",
-  "types": "index.d.ts"
+  "types": "index.d.ts",
+  "dependencies": {
+    "@thinly/validation": "workspace:^0.0.10",
+    "axios": "^0.21.1",
+    "tslib": "^2.2.0"
+  },
+  "devDependencies": {
+    "typescript": "^4.2.4"
+  }
 }

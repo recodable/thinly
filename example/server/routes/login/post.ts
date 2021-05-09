@@ -1,4 +1,4 @@
-import validation from '@thinly/validation'
+import * as validation from '@thinly/validation'
 // import { PrismaClient } from '@prisma/client'
 
 // const prisma = new PrismaClient()

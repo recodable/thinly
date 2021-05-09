@@ -2,11 +2,11 @@ import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 import { useEffect } from 'react'
-import client from '@thinly/client'
+import client from '../client'
 
 export default function Home() {
   useEffect(() => {
-    client.hello()
+    client.hello().then(console.log)
   }, [])
 
   return (

@@ -1,1 +1,1 @@
-export * from '.thinly/client'
+export * from './.cache'

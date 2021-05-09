@@ -1,7 +1,5 @@
 // import type { Request, Response, NextFunction } from 'express'
-import * as validation from 'yup'
-
-export default validation
+export * from 'yup'
 
 // export type PART = 'body' | 'params' | 'query'
 
