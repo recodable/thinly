@@ -1,7 +1,9 @@
-export type Route = {
+export type BaseRoute = {
   path: string
   method: 'get' | 'post' | 'put' | 'patch' | 'delete'
-  // validate?: (body: any) => boolean
+}
+
+export interface Route extends BaseRoute {
   validationSchema?: any
   handler: (req) => any | Promise<any>
 }

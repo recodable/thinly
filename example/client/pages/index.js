@@ -6,7 +6,7 @@ import client from '../client'
 
 export default function Home() {
   useEffect(() => {
-    client.hello().then(console.log)
+    client.login.post().then(console.log)
   }, [])
 
   return (
