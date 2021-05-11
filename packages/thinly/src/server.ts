@@ -2,7 +2,7 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import cors from 'cors'
 // import type { Route } from './types'
-import validation from '@thinly/validation'
+import * as validation from '@thinly/validation'
 
 // @ts-ignore
 import routes from 'routes'

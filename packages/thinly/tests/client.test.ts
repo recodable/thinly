@@ -39,3 +39,15 @@ test('client map to `id` method if there is a route parameter named: `id`', () =
   expect(keys.includes('get')).toBe(true)
   expect(keys.includes('post')).toBe(true)
 })
+
+test('print map into client', () => {
+  expect(typeof client.posts.id).toBe('function')
+
+  expect(typeof client.posts.id().comments.commentId).toBe('function')
+
+  expect(typeof client.posts.id().comments.get).toBe('function')
+
+  expect(typeof client.posts.id().comments.post).toBe('function')
+
+  expect(typeof client.posts.id().comments.commentId().get).toBe('function')
+})

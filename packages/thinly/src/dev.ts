@@ -29,7 +29,7 @@ const config: Options = {
 
 async function buildServer(routes) {
   const bundle = await rollup({
-    input: join(__dirname, '..', '..', 'src/server.ts'),
+    input: join(__dirname, 'server.ts'),
 
     plugins: [
       typescript(),
@@ -61,7 +61,7 @@ async function buildServer(routes) {
 
 async function buildClient(routes) {
   const bundle = await rollup({
-    input: join(__dirname, '..', '..', 'src/client.ts'),
+    input: join(__dirname, 'client.ts'),
 
     plugins: [
       typescript(),
@@ -93,6 +93,8 @@ async function buildClient(routes) {
   })
 
   await bundle.close()
+
+  console.log(`Generated client: ${config.client.output}`)
 }
 
 async function buildClientTypes(routes) {
@@ -252,9 +254,7 @@ export default async () => {
           exclude: ['handler'],
 
           hooks: {
-            bundled: async (output) => {
-              const [routes] = output
-
+            bundled: async ([routes]) => {
               await buildClient(routes)
 
               await buildClientTypes(routes)
