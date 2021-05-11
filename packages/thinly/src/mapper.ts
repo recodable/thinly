@@ -1,6 +1,3 @@
-import axios from 'axios'
-import * as validation from '@thinly/validation'
-
 export function createMap(routes) {
   let result = {}
 
@@ -27,54 +24,4 @@ export function map([current, ...remaining], value, initialValue) {
     ...initialValue,
     [current]: map(remaining, value, currentValue),
   }
-}
-
-function walk(map, targetKey, fn) {
-  return Object.keys(map).reduce((acc, key) => {
-    if (key.startsWith(':')) {
-      return {
-        ...acc,
-        [key.slice(1)]: (value) => {
-          return walk(acc[key], targetKey, fn)
-        },
-      }
-    }
-
-    if (key === targetKey) {
-      return { ...acc, ...fn(map[key]) }
-    }
-
-    return { ...acc, [key]: walk(acc[key], targetKey, fn) }
-  }, map)
-}
-
-const defaultOptions = { env: { API_URL: '' } }
-
-export function transform(initialMap, options = {}) {
-  options = { ...defaultOptions, ...options }
-
-  const map = { ...initialMap }
-
-  return walk(map, '_routes', (routes) => {
-    return routes.reduce((acc, route) => {
-      return {
-        ...acc,
-        [route.method]: (data) => {
-          if (!route.validationSchema) {
-            return axios[route.method](options.env.API_URL + route.path, data)
-          }
-          const schema = validation.object().shape(route.validationSchema)
-          return schema
-            .validate(data)
-            .then((validatedData) => {
-              return axios[route.method](
-                options.env.API_URL + route.path,
-                validatedData,
-              )
-            })
-            .catch(console.log)
-        },
-      }
-    }, {})
-  })
 }
