@@ -51,7 +51,7 @@ function walk(map, targetKey, fn) {
 const defaultOptions = { env: { API_URL: '' } }
 
 export function transform(initialMap, options = {}) {
-  options = { ...options, ...defaultOptions }
+  options = { ...defaultOptions, ...options }
 
   const map = { ...initialMap }
 
@@ -68,7 +68,7 @@ export function transform(initialMap, options = {}) {
             .validate(data)
             .then((validatedData) => {
               return axios[route.method](
-                env.API_URL + route.path,
+                options.env.API_URL + route.path,
                 validatedData,
               )
             })

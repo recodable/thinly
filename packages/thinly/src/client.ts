@@ -37,7 +37,7 @@ import routes from 'routes'
 //   }
 // }
 
-export function createClient({ env }) {
+export function createClient(options) {
   // let client = {}
   // Object.entries(routes).forEach(([name, route]) => {
   //   const [, ...parts] = route.path.split('/')
@@ -58,7 +58,8 @@ export function createClient({ env }) {
   //   )
   // })
   // return client
+
   const result = createMap(routes)
 
-  return transform(result, { env })
+  return transform(result, options)
 }
