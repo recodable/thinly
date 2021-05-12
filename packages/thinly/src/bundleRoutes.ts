@@ -41,7 +41,7 @@ export default async function bundleRoutes(options: Options = {}) {
 
     output: {
       file: '.thinly/routes.js',
-      format: 'es',
+      format: 'cjs',
     },
 
     plugins: [
@@ -183,7 +183,7 @@ export default async function bundleRoutes(options: Options = {}) {
     if (event.code === 'BUNDLE_END') {
       const { output } = await event.result.generate({
         file: '.thinly/routes.js',
-        format: 'es',
+        format: 'cjs',
       })
 
       if (options.hooks.bundled) {

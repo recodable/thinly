@@ -7,6 +7,8 @@ import pkg from '../package.json'
 import replace from '@rollup/plugin-replace'
 import ts, { createSourceFile, factory, createPrinter } from 'typescript'
 import { writeFileSync } from 'fs'
+import { createMap } from './mapper'
+import { walk } from './walker'
 
 export type ClientOptions = {
   output: string
@@ -98,6 +100,27 @@ async function buildClient(routes) {
 }
 
 async function buildClientTypes(routes) {
+  const map = createMap(routes)
+
+  walk(map, [
+    {
+      match: (key) => key === '_routes',
+      handler: ({ routes, key }) => {
+        console.log({ routes, key, type: '_routes' })
+        return routes
+      },
+    },
+    {
+      match: (key) => key.startsWith(':'),
+      handler: ({ routes, key, modifiers }) => {
+        return {
+          ...routes,
+          [key.slice(1)]: walk(routes[key], modifiers),
+        }
+      },
+    },
+  ])
+
   const resultFile = createSourceFile(
     'index.d.ts',
     '',
@@ -125,19 +148,20 @@ async function buildClientTypes(routes) {
               factory.createIdentifier('Client'),
               undefined,
               undefined,
-              routes.exports.map((name) => {
-                return factory.createMethodSignature(
-                  undefined,
-                  factory.createIdentifier(name),
-                  undefined,
-                  undefined,
-                  [],
-                  factory.createTypeReferenceNode(
-                    factory.createIdentifier('Promise'),
-                    [factory.createKeywordTypeNode(ts.SyntaxKind.AnyKeyword)],
-                  ),
-                )
-              }),
+              [],
+              // routes.exports.map((name) => {
+              //   return factory.createMethodSignature(
+              //     undefined,
+              //     factory.createIdentifier(name),
+              //     undefined,
+              //     undefined,
+              //     [],
+              //     factory.createTypeReferenceNode(
+              //       factory.createIdentifier('Promise'),
+              //       [factory.createKeywordTypeNode(ts.SyntaxKind.AnyKeyword)],
+              //     ),
+              //   )
+              // }),
             ),
             factory.createTypeAliasDeclaration(
               undefined,
@@ -257,7 +281,9 @@ export default async () => {
             bundled: async ([routes]) => {
               await buildClient(routes)
 
-              await buildClientTypes(routes)
+              await buildClientTypes(
+                await import(join(process.cwd(), '.thinly/routes')),
+              )
             },
           },
         })
