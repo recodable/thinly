@@ -1,10 +1,9 @@
 import { join, basename } from 'path'
-import rollup from 'rollup'
+import { rollup } from 'rollup'
 import sucrase from '@rollup/plugin-sucrase'
 import multi from '@rollup/plugin-multi-entry'
 import camelCase from 'lodash.camelcase'
 import { transformSync } from '@babel/core'
-import pkg from '../package.json'
 import { external } from './bundle'
 
 function isVirtual(id): boolean {
@@ -34,16 +33,11 @@ export default async function bundleRoutes(options: Options = {}) {
     ...options,
   }
 
-  const watcher = await rollup.watch({
+  const bundle = await rollup({
     input: [
       join(process.cwd(), 'routes', '**', '*.ts'),
       join(process.cwd(), 'routes', '**', '*.js'),
     ],
-
-    output: {
-      file: '.thinly/routes.js',
-      format: 'cjs',
-    },
 
     plugins: [
       sucrase({
@@ -61,12 +55,6 @@ export default async function bundleRoutes(options: Options = {}) {
           if (isVirtual(id)) {
             return code
           }
-
-          // const [route] = id
-          //   .replace(join(process.cwd(), cfg.routeDir), '')
-          //   .split('.')
-
-          // const name = camelCase(route)
 
           let [route] = id.replace(join(process.cwd(), 'routes'), '').split('.')
 
@@ -177,43 +165,48 @@ export default async function bundleRoutes(options: Options = {}) {
     external,
   })
 
-  watcher.on('event', async (event) => {
-    if (event.code === 'START') {
-      console.log('compiling...')
+  // watcher.on('event', async (event) => {
+  //   if (event.code === 'START') {
+  //     console.log('compiling...')
 
-      if (options.hooks.started) {
-        options.hooks.started()
-      }
-    }
+  //     if (options.hooks.started) {
+  //       options.hooks.started()
+  //     }
+  //   }
 
-    if (event.code === 'BUNDLE_END') {
-      const { output } = await event.result.generate({
-        file: '.thinly/routes.js',
-        format: 'cjs',
-      })
+  //   if (event.code === 'BUNDLE_END') {
+  //     const { output } = await event.result.generate({
+  //       file: '.thinly/routes.js',
+  //       format: 'cjs',
+  //     })
 
-      if (options.hooks.bundled) {
-        options.hooks.bundled(output)
-      }
-    }
+  //     if (options.hooks.bundled) {
+  //       options.hooks.bundled(output)
+  //     }
+  //   }
 
-    if (event.code === 'END' && !options.watch) {
-      watcher.close()
-    }
-  })
-
-  watcher.on('event', (event) => {
-    if (event.code === 'BUNDLE_END') {
-      event.result.close()
-    }
-  })
-
-  // const { output } = await bundle.generate({
-  //   file: '.thinly/routes.js',
-  //   format: 'cjs',
+  //   if (event.code === 'END' && !options.watch) {
+  //     watcher.close()
+  //   }
   // })
 
-  // await bundle.close()
+  // watcher.on('event', (event) => {
+  //   if (event.code === 'BUNDLE_END') {
+  //     event.result.close()
+  //   }
+  // })
 
-  // return output
+  await bundle.write({
+    file: '.thinly/routes.js',
+    format: 'cjs',
+  })
+
+  const { output } = await bundle.generate({
+    file: '.thinly/routes.js',
+    format: 'cjs',
+  })
+
+  await bundle.close()
+
+  return output
 }

@@ -282,49 +282,21 @@ async function buildClientTypes(routes) {
 }
 
 export default async () => {
-  let server
+  const [serverRoutes] = await bundleRoutes()
 
-  await bundleRoutes({
-    watch: true,
+  await buildServer(serverRoutes)
 
-    hooks: {
-      started: () => {
-        if (server) {
-          server.close()
-        }
-      },
+  const bundledOuput = process.cwd() + '/.thinly/index.js'
 
-      bundled: async (output) => {
-        const [routes] = output
+  delete require.cache[bundledOuput]
 
-        await buildServer(routes)
+  const app = require(bundledOuput)
 
-        const bundledOuput = process.cwd() + '/.thinly/index.js'
+  app.listen(3000, () => console.log('API running on http://localhost:3000'))
 
-        delete require.cache[bundledOuput]
+  const [clientRoutes] = await bundleRoutes()
 
-        const app = require(bundledOuput)
+  await buildClient(clientRoutes)
 
-        server = app.listen(3000, () =>
-          console.log('API running on http://localhost:3000'),
-        )
-
-        await bundleRoutes({
-          watch: true,
-
-          exclude: ['handler'],
-
-          hooks: {
-            bundled: async ([routes]) => {
-              await buildClient(routes)
-
-              await buildClientTypes(
-                await import(join(process.cwd(), '.thinly/routes')),
-              )
-            },
-          },
-        })
-      },
-    },
-  })
+  await buildClientTypes(await import(join(process.cwd(), '.thinly/routes')))
 }

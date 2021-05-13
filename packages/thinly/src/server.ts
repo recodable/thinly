@@ -18,16 +18,6 @@ Object.values(routes).map((route: ServerRoute) => {
   }
 
   app[route.method]('/api' + route.path, async (req, res, next) => {
-    // let valid = true
-
-    // if (route.validate) {
-    //   valid = route.validate(req.body)
-    // }
-
-    // if (!valid) {
-    //   return res.status(422).send({ errors: ['invalid data'] })
-    // }
-
     if (route.validationSchema) {
       const schema = validation.object().shape(route.validationSchema)
 

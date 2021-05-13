@@ -1,18 +1,20 @@
-// export type Modifier = {
-//   match: (string) => boolean
-//   handler: (Context) => any
-// }
+export type Modifier = {
+  match: (string) => boolean
+  handler: (Context) => any
+}
 
-// export type Context = {
-//   key: string
-//   routes: any
-//   modifiers: Modifier[]
-//   depth: number
-// }
+export type Context = {
+  key: string
+  routes: any
+  modifiers: Modifier[]
+  depth: number
+  context: any
+  index: number
+}
 
 export function walk(
   map,
-  modifiers,
+  modifiers: Modifier[],
   depth = 0,
   context = {},
   initialValue = null,
@@ -35,10 +37,5 @@ export function walk(
     }
 
     throw new Error('Unhandled modifier')
-    // console.log({ acc, key, where: 'default' })
-    // return {
-    //   ...acc,
-    //   [key]: walk(acc[key], modifiers, depth + 1, context, initialValue),
-    // }
   }, initialValue)
 }
