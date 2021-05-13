@@ -10,20 +10,11 @@ function isVirtual(id): boolean {
   return /\x00virtual:.*/.test(id)
 }
 
-export type Hooks = {
-  started?: () => any
-  bundled?: (output) => any
-}
-
 export type Options = {
-  watch?: boolean
-  hooks?: Hooks
   exclude?: string[]
 }
 
 const defaultOptions = {
-  watch: false,
-  hooks: {},
   exclude: [],
 }
 
@@ -164,37 +155,6 @@ export default async function bundleRoutes(options: Options = {}) {
 
     external,
   })
-
-  // watcher.on('event', async (event) => {
-  //   if (event.code === 'START') {
-  //     console.log('compiling...')
-
-  //     if (options.hooks.started) {
-  //       options.hooks.started()
-  //     }
-  //   }
-
-  //   if (event.code === 'BUNDLE_END') {
-  //     const { output } = await event.result.generate({
-  //       file: '.thinly/routes.js',
-  //       format: 'cjs',
-  //     })
-
-  //     if (options.hooks.bundled) {
-  //       options.hooks.bundled(output)
-  //     }
-  //   }
-
-  //   if (event.code === 'END' && !options.watch) {
-  //     watcher.close()
-  //   }
-  // })
-
-  // watcher.on('event', (event) => {
-  //   if (event.code === 'BUNDLE_END') {
-  //     event.result.close()
-  //   }
-  // })
 
   await bundle.write({
     file: '.thinly/routes.js',
