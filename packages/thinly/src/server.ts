@@ -13,10 +13,6 @@ app.use(bodyParser.json())
 app.use(cors())
 
 Object.values(routes).map((route: ServerRoute) => {
-  if (process.env.NODE_ENV === 'development') {
-    console.log(`${route.method.toUpperCase()} ${route.path}`)
-  }
-
   app[route.method]('/api' + route.path, async (req, res, next) => {
     if (route.validationSchema) {
       const schema = validation.object().shape(route.validationSchema)

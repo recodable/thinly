@@ -3,21 +3,21 @@ import { watch } from 'chokidar'
 import { input } from './bundleRoutes'
 import type { Application } from 'express'
 import type { Server } from 'http'
+import chalk from 'chalk'
 
 export let server: Server = null
 
 export async function start(): Promise<Server> {
-  await build()
+  const app: Application = await build()
 
-  const bundledOuput = process.cwd() + '/.thinly/index.js'
-
-  delete require.cache[bundledOuput]
-
-  const app: Application = require(bundledOuput)
-
-  server = app.listen(3000, () =>
-    console.log('API running on http://localhost:3000'),
-  )
+  server = app.listen(3000, () => {
+    console.log('\n')
+    console.log(
+      chalk.bgGreen(
+        `  > API running on ${chalk.underline('http://localhost:3000')}  `,
+      ),
+    )
+  })
 
   return server
 }

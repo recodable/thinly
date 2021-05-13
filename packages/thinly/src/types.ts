@@ -1,6 +1,8 @@
+export type Method = 'get' | 'post' | 'put' | 'patch' | 'delete'
+
 export type BaseRoute = {
   path: string
-  method: 'get' | 'post' | 'put' | 'patch' | 'delete'
+  method: Method
   validationSchema?: any
 }
 

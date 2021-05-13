@@ -5,6 +5,10 @@ import { writeFileSync } from 'fs'
 import { createMap } from './mapper'
 import { walk } from './walker'
 import { createBundle } from './bundle'
+import chalk from 'chalk'
+import spinner from './spinner'
+import { Application } from 'express'
+import { Method } from './types'
 
 export type ClientOptions = {
   output: string
@@ -266,14 +270,55 @@ export async function buildClientTypes(routes) {
   writeFileSync(join(config.client.output, 'index.d.ts'), result)
 }
 
+function getColorMethod(method: Method) {
+  if (method === 'get') return chalk.green
+  if (method === 'post') return chalk.blue
+  if (method === 'put') return chalk.yellow
+  if (method === 'patch') return chalk.cyan
+  if (method === 'delete') return chalk.red
+
+  throw new Error(`Method ${method} is not supported`)
+}
+
 export default async () => {
+  spinner.start('Bundle routes')
   const [serverRoutes] = await bundleRoutes()
 
+  spinner.start('Build API server')
   await buildServer(serverRoutes)
 
+  spinner.start('Bundle routes')
   const [clientRoutes] = await bundleRoutes({ exclude: ['handler'] })
 
+  spinner.start('Build client')
   await buildClient(clientRoutes)
 
+  spinner.start('Generate client types')
   await buildClientTypes(await import(join(process.cwd(), '.thinly/routes')))
+
+  spinner.stop()
+
+  // import app
+  const bundledOuput = process.cwd() + '/.thinly/index.js'
+
+  delete require.cache[bundledOuput]
+
+  const app: Application = require(bundledOuput)
+
+  app._router.stack
+    .map((layer) => layer.route)
+    .filter((v) => v)
+    .forEach((route) => {
+      const methods = Object.keys(route.methods)
+        .map((method: Method) => {
+          const coloring = getColorMethod(method)
+
+          return coloring(method.toUpperCase().padEnd(5))
+        })
+        .join(' | ')
+
+      return console.log(`${methods} ${route.path}`)
+    })
+
+  return app
 }
