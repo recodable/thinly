@@ -1,5 +1,4 @@
 import { rollup } from 'rollup'
-import typescript from '@rollup/plugin-typescript'
 import { join } from 'path'
 import bundleRoutes from './bundleRoutes'
 import virtual from '@rollup/plugin-virtual'
@@ -9,6 +8,7 @@ import ts, { createSourceFile, factory, createPrinter } from 'typescript'
 import { writeFileSync } from 'fs'
 import { createMap } from './mapper'
 import { walk } from './walker'
+import sucrase from '@rollup/plugin-sucrase'
 
 export type ClientOptions = {
   output: string
@@ -29,12 +29,15 @@ const config: Options = {
   ...require(join(process.cwd(), 'thinly.config.js')),
 }
 
-async function buildServer(routes) {
-  const bundle = await rollup({
-    input: join(__dirname, 'server.ts'),
+async function createBundle(input, routes) {
+  return rollup({
+    input,
 
     plugins: [
-      typescript(),
+      sucrase({
+        exclude: ['node_modules/**'],
+        transforms: ['typescript'],
+      }),
 
       virtual({
         routes: `
@@ -51,6 +54,10 @@ async function buildServer(routes) {
 
     external: [...Object.keys(pkg.dependencies), 'path'],
   })
+}
+
+async function buildServer(routes) {
+  const bundle = await createBundle(join(__dirname, 'server.ts'), routes)
 
   await bundle.write({
     file: '.thinly/index.js',
@@ -62,27 +69,7 @@ async function buildServer(routes) {
 }
 
 async function buildClient(routes) {
-  const bundle = await rollup({
-    input: join(__dirname, 'client.ts'),
-
-    plugins: [
-      typescript(),
-
-      virtual({
-        routes: `
-          ${routes.code}
-          export default { ${routes.exports} }
-        `,
-      }),
-
-      replace({
-        preventAssignment: true,
-        'process.env.NODE_ENV': JSON.stringify('development'),
-      }),
-    ],
-
-    external: [...Object.keys(pkg.dependencies), 'path'],
-  })
+  const bundle = await createBundle(join(__dirname, 'client.ts'), routes)
 
   await bundle.write({
     file: join(config.client.output, 'index.js'),
@@ -102,96 +89,6 @@ async function buildClient(routes) {
 async function buildClientTypes(routes) {
   console.log('Start generating client types...')
   const map = createMap(routes)
-
-  const test = walk(
-    map,
-    [
-      {
-        match: (key) => key === '_routes',
-        handler: ({ routes, key, index }) => {
-          console.log({ acc: routes, key, where: '"_routes" handler' })
-
-          return routes[index].reduce((acc, route) => {
-            return [
-              ...acc,
-              factory.createMethodSignature(
-                undefined,
-                factory.createIdentifier(route.method),
-                undefined,
-                undefined,
-                [],
-                undefined,
-              ),
-            ]
-          }, Object.values(routes))
-        },
-      },
-      {
-        match: (key) => key.startsWith(':'),
-        handler: ({ routes, key, modifiers, depth, context, index }) => {
-          console.log({ acc: routes, key, where: '":" handler' })
-
-          routes[index] = factory.createMethodSignature(
-            undefined,
-            factory.createIdentifier(key.slice(1)),
-            undefined,
-            undefined,
-            [
-              factory.createParameterDeclaration(
-                undefined,
-                undefined,
-                undefined,
-                factory.createIdentifier('value'),
-                undefined,
-                factory.createUnionTypeNode([
-                  factory.createKeywordTypeNode(ts.SyntaxKind.StringKeyword),
-                  factory.createKeywordTypeNode(ts.SyntaxKind.NumberKeyword),
-                ]),
-                undefined,
-              ),
-            ],
-            factory.createTypeLiteralNode(
-              walk(
-                routes[index],
-                modifiers,
-                depth + 1,
-                context,
-                Object.values(routes[index]),
-              ),
-            ),
-          )
-
-          return routes
-        },
-      },
-      {
-        match: () => true,
-        handler: ({ routes, key, modifiers, depth, context, index }) => {
-          console.log({ acc: routes, key, where: 'default' })
-
-          routes[index] = factory.createPropertySignature(
-            undefined,
-            factory.createIdentifier(key),
-            undefined,
-            factory.createTypeLiteralNode(
-              walk(
-                routes[index],
-                modifiers,
-                depth + 1,
-                context,
-                Object.values(routes[index]),
-              ),
-            ),
-          )
-
-          return routes
-        },
-      },
-    ],
-    0,
-    {},
-    Object.values(map),
-  )
 
   const resultFile = createSourceFile(
     'index.d.ts',
@@ -220,20 +117,117 @@ async function buildClientTypes(routes) {
               factory.createIdentifier('Client'),
               undefined,
               undefined,
-              test,
-              // routes.exports.map((name) => {
-              //   return factory.createMethodSignature(
-              //     undefined,
-              //     factory.createIdentifier(name),
-              //     undefined,
-              //     undefined,
-              //     [],
-              //     factory.createTypeReferenceNode(
-              //       factory.createIdentifier('Promise'),
-              //       [factory.createKeywordTypeNode(ts.SyntaxKind.AnyKeyword)],
-              //     ),
-              //   )
-              // }),
+              walk(
+                map,
+                [
+                  {
+                    match: (key) => key === '_routes',
+                    handler: ({ routes, key, index }) => {
+                      console.log({
+                        acc: routes,
+                        key,
+                        where: '"_routes" handler',
+                      })
+
+                      return routes[index].reduce((acc, route) => {
+                        return [
+                          ...acc,
+                          factory.createMethodSignature(
+                            undefined,
+                            factory.createIdentifier(route.method),
+                            undefined,
+                            undefined,
+                            [],
+                            undefined,
+                          ),
+                        ]
+                      }, Object.values(routes))
+                    },
+                  },
+                  {
+                    match: (key) => key.startsWith(':'),
+                    handler: ({
+                      routes,
+                      key,
+                      modifiers,
+                      depth,
+                      context,
+                      index,
+                    }) => {
+                      console.log({ acc: routes, key, where: '":" handler' })
+
+                      routes[index] = factory.createMethodSignature(
+                        undefined,
+                        factory.createIdentifier(key.slice(1)),
+                        undefined,
+                        undefined,
+                        [
+                          factory.createParameterDeclaration(
+                            undefined,
+                            undefined,
+                            undefined,
+                            factory.createIdentifier('value'),
+                            undefined,
+                            factory.createUnionTypeNode([
+                              factory.createKeywordTypeNode(
+                                ts.SyntaxKind.StringKeyword,
+                              ),
+                              factory.createKeywordTypeNode(
+                                ts.SyntaxKind.NumberKeyword,
+                              ),
+                            ]),
+                            undefined,
+                          ),
+                        ],
+                        factory.createTypeLiteralNode(
+                          walk(
+                            routes[index],
+                            modifiers,
+                            depth + 1,
+                            context,
+                            Object.values(routes[index]),
+                          ),
+                        ),
+                      )
+
+                      return routes
+                    },
+                  },
+                  {
+                    match: () => true,
+                    handler: ({
+                      routes,
+                      key,
+                      modifiers,
+                      depth,
+                      context,
+                      index,
+                    }) => {
+                      console.log({ acc: routes, key, where: 'default' })
+
+                      routes[index] = factory.createPropertySignature(
+                        undefined,
+                        factory.createIdentifier(key),
+                        undefined,
+                        factory.createTypeLiteralNode(
+                          walk(
+                            routes[index],
+                            modifiers,
+                            depth + 1,
+                            context,
+                            Object.values(routes[index]),
+                          ),
+                        ),
+                      )
+
+                      return routes
+                    },
+                  },
+                ],
+                0,
+                {},
+                Object.values(map),
+              ),
             ),
             factory.createTypeAliasDeclaration(
               undefined,

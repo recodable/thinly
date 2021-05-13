@@ -1,6 +1,6 @@
 import { join, basename } from 'path'
 import rollup from 'rollup'
-import typescript from '@rollup/plugin-typescript'
+import sucrase from '@rollup/plugin-sucrase'
 import multi from '@rollup/plugin-multi-entry'
 import camelCase from 'lodash.camelcase'
 import { transformSync } from '@babel/core'
@@ -45,8 +45,13 @@ export default async function bundleRoutes(options: Options = {}) {
     },
 
     plugins: [
-      typescript(),
+      sucrase({
+        exclude: ['node_modules/**'],
+        transforms: ['typescript'],
+      }),
+
       multi(),
+
       {
         name: 'thinly-routes',
 
@@ -196,9 +201,9 @@ export default async function bundleRoutes(options: Options = {}) {
     }
   })
 
-  watcher.on('event', ({ result }) => {
-    if (result) {
-      result.close()
+  watcher.on('event', (event) => {
+    if (event.code === 'BUNDLE_END') {
+      event.result.close()
     }
   })
 

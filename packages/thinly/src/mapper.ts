@@ -1,7 +1,9 @@
+import { BaseRoute } from './types'
+
 export function createMap(routes) {
   let result = {}
 
-  Object.values(routes).forEach((route) => {
+  Object.values(routes).forEach((route: BaseRoute) => {
     const parts = route.path.split('/').filter((v) => v)
     result = map(parts, route, result)
   })
@@ -9,7 +11,7 @@ export function createMap(routes) {
   return result
 }
 
-export function map([current, ...remaining], value, initialValue) {
+export function map([current, ...remaining]: string[], value, initialValue) {
   const currentValue = initialValue[current] || {}
 
   if (remaining.length === 0) {

@@ -1,11 +1,10 @@
+// @ts-ignore
+import routes from 'routes'
 import express from 'express'
 import bodyParser from 'body-parser'
 import cors from 'cors'
-// import type { Route } from './types'
 import * as validation from '@thinly/validation'
-
-// @ts-ignore
-import routes from 'routes'
+import { ServerRoute } from './types'
 
 const app = express()
 
@@ -13,7 +12,7 @@ app.use(bodyParser.json())
 
 app.use(cors())
 
-Object.values(routes).map((route) => {
+Object.values(routes).map((route: ServerRoute) => {
   if (process.env.NODE_ENV === 'development') {
     console.log(`${route.method.toUpperCase()} ${route.path}`)
   }
