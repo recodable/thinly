@@ -10,14 +10,15 @@
 //   depth: number
 // }
 
-export function walk(map, modifiers, depth = 0) {
+export function walk(map, modifiers, depth = 0, context = {}) {
   return Object.keys(map).reduce((acc, key) => {
     const modifier = modifiers.find((modifier) => modifier.match(key))
 
     if (modifier) {
-      return modifier.handler({ routes: acc, key, modifiers, depth })
+      return modifier.handler({ routes: acc, key, modifiers, depth, context })
     }
 
-    return { ...acc, [key]: walk(acc[key], modifiers, depth + 1) }
+    console.log({ acc, key, where: 'default' })
+    return { ...acc, [key]: walk(acc[key], modifiers, depth + 1, context) }
   }, map)
 }

@@ -302,9 +302,9 @@ export default async () => {
             bundled: async ([routes]) => {
               await buildClient(routes)
 
-              await buildClientTypes(
-                await import(join(process.cwd(), '.thinly/routes')),
-              )
+              // await buildClientTypes(
+              //   await import(join(process.cwd(), '.thinly/routes')),
+              // )
             },
           },
         })
