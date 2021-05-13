@@ -123,29 +123,51 @@ async function buildClientTypes(routes) {
                 undefined,
               ),
             ]
-          }, [])
+          }, Object.values(routes))
         },
       },
-      // {
-      //   match: (key) => key.startsWith(':'),
-      //   handler: ({ routes, key, index}) => {
+      {
+        match: (key) => key.startsWith(':'),
+        handler: ({ routes, key, modifiers, depth, context, index }) => {
+          console.log({ acc: routes, key, where: '":" handler' })
 
-      //   }
-      // },
+          routes[index] = factory.createMethodSignature(
+            undefined,
+            factory.createIdentifier(key.slice(1)),
+            undefined,
+            undefined,
+            [
+              factory.createParameterDeclaration(
+                undefined,
+                undefined,
+                undefined,
+                factory.createIdentifier('value'),
+                undefined,
+                factory.createUnionTypeNode([
+                  factory.createKeywordTypeNode(ts.SyntaxKind.StringKeyword),
+                  factory.createKeywordTypeNode(ts.SyntaxKind.NumberKeyword),
+                ]),
+                undefined,
+              ),
+            ],
+            factory.createTypeLiteralNode(
+              walk(
+                routes[index],
+                modifiers,
+                depth + 1,
+                context,
+                Object.values(routes[index]),
+              ),
+            ),
+          )
+
+          return routes
+        },
+      },
       {
         match: () => true,
         handler: ({ routes, key, modifiers, depth, context, index }) => {
           console.log({ acc: routes, key, where: 'default' })
-
-          console.log(
-            walk(
-              routes[index],
-              modifiers,
-              depth + 1,
-              context,
-              Object.values(routes[index]),
-            ),
-          )
 
           routes[index] = factory.createPropertySignature(
             undefined,
@@ -170,7 +192,6 @@ async function buildClientTypes(routes) {
     {},
     Object.values(map),
   )
-  console.log(test)
 
   const resultFile = createSourceFile(
     'index.d.ts',

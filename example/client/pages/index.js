@@ -7,7 +7,7 @@ export default function Home() {
     password: '',
   })
   useEffect(() => {
-    console.log(client.hello.get())
+    client.posts.id(1).comments.get()
     // console.log({ client })
     // console.log({ test: client.posts.id(1).comments.post() })
     // setTimeout(() => {
