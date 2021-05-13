@@ -18,6 +18,11 @@ const defaultOptions = {
   exclude: [],
 }
 
+export const input = [
+  join(process.cwd(), 'routes', '**', '*.ts'),
+  join(process.cwd(), 'routes', '**', '*.js'),
+]
+
 export default async function bundleRoutes(options: Options = {}) {
   options = {
     ...defaultOptions,
@@ -25,10 +30,7 @@ export default async function bundleRoutes(options: Options = {}) {
   }
 
   const bundle = await rollup({
-    input: [
-      join(process.cwd(), 'routes', '**', '*.ts'),
-      join(process.cwd(), 'routes', '**', '*.js'),
-    ],
+    input,
 
     plugins: [
       sucrase({

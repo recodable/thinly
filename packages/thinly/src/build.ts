@@ -25,7 +25,7 @@ const config: Options = {
   ...require(join(process.cwd(), 'thinly.config.js')),
 }
 
-async function buildServer(routes) {
+export async function buildServer(routes) {
   const bundle = await createBundle(join(__dirname, 'server.ts'), routes)
 
   await bundle.write({
@@ -37,7 +37,7 @@ async function buildServer(routes) {
   await bundle.close()
 }
 
-async function buildClient(routes) {
+export async function buildClient(routes) {
   const bundle = await createBundle(join(__dirname, 'client.ts'), routes)
 
   await bundle.write({
@@ -51,12 +51,9 @@ async function buildClient(routes) {
   })
 
   await bundle.close()
-
-  console.log(`Generated client: ${config.client.output}`)
 }
 
-async function buildClientTypes(routes) {
-  console.log('Start generating client types...')
+export async function buildClientTypes(routes) {
   const map = createMap(routes)
 
   const resultFile = createSourceFile(
@@ -91,13 +88,7 @@ async function buildClientTypes(routes) {
                 [
                   {
                     match: (key) => key === '_routes',
-                    handler: ({ routes, key, index }) => {
-                      console.log({
-                        acc: routes,
-                        key,
-                        where: '"_routes" handler',
-                      })
-
+                    handler: ({ routes, index }) => {
                       return routes[index].reduce((acc, route) => {
                         return [
                           ...acc,
@@ -123,8 +114,6 @@ async function buildClientTypes(routes) {
                       context,
                       index,
                     }) => {
-                      console.log({ acc: routes, key, where: '":" handler' })
-
                       routes[index] = factory.createMethodSignature(
                         undefined,
                         factory.createIdentifier(key.slice(1)),
@@ -172,8 +161,6 @@ async function buildClientTypes(routes) {
                       context,
                       index,
                     }) => {
-                      console.log({ acc: routes, key, where: 'default' })
-
                       routes[index] = factory.createPropertySignature(
                         undefined,
                         factory.createIdentifier(key),
@@ -277,8 +264,6 @@ async function buildClientTypes(routes) {
   const result = printer.printList(ts.ListFormat.MultiLine, ast, resultFile)
 
   writeFileSync(join(config.client.output, 'index.d.ts'), result)
-
-  console.log('Generated client types!')
 }
 
 export default async () => {

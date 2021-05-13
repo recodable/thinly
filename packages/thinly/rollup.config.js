@@ -27,5 +27,5 @@ export default {
     }),
   ],
 
-  external: [...Object.keys(pkg.dependencies), 'path', 'fs'],
+  external: [...Object.keys(pkg.dependencies), 'path', 'fs', 'util'],
 }
