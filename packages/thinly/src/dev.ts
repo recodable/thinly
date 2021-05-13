@@ -102,25 +102,6 @@ async function buildClient(routes) {
 async function buildClientTypes(routes) {
   const map = createMap(routes)
 
-  walk(map, [
-    {
-      match: (key) => key === '_routes',
-      handler: ({ routes, key }) => {
-        console.log({ routes, key, type: '_routes' })
-        return routes
-      },
-    },
-    {
-      match: (key) => key.startsWith(':'),
-      handler: ({ routes, key, modifiers }) => {
-        return {
-          ...routes,
-          [key.slice(1)]: walk(routes[key], modifiers),
-        }
-      },
-    },
-  ])
-
   const resultFile = createSourceFile(
     'index.d.ts',
     '',
@@ -148,7 +129,47 @@ async function buildClientTypes(routes) {
               factory.createIdentifier('Client'),
               undefined,
               undefined,
-              [],
+              Object.values(
+                walk(map, [
+                  {
+                    match: (key) => key === '_routes',
+                    handler: ({ routes, key }) => {
+                      return factory.createTypeLiteralNode([
+                        ...routes[key].map((route) => {
+                          return factory.createMethodSignature(
+                            undefined,
+                            factory.createIdentifier(route.method),
+                            undefined,
+                            undefined,
+                            [],
+                            undefined,
+                          )
+                        }),
+                      ])
+                    },
+                  },
+                  {
+                    match: () => true,
+                    handler: ({ routes, key, modifiers, depth }) => {
+                      console.log(routes[key])
+                      const value = factory.createPropertySignature(
+                        undefined,
+                        factory.createIdentifier(
+                          key.startsWith(':') ? key.slice(1) : key,
+                        ),
+                        undefined,
+                        walk(routes[key], modifiers, depth + 1),
+                      )
+
+                      if (depth > 1) {
+                        return value
+                      }
+
+                      return { ...routes, [key]: value }
+                    },
+                  },
+                ]),
+              ),
               // routes.exports.map((name) => {
               //   return factory.createMethodSignature(
               //     undefined,

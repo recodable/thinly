@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import client from '../client'
 
 export default function Home() {
@@ -6,6 +6,9 @@ export default function Home() {
     email: '',
     password: '',
   })
+  useEffect(() => {
+    client.posts.id(1).comments.get()
+  }, [])
 
   return (
     <form

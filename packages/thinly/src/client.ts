@@ -26,8 +26,8 @@ export function createClient(options) {
     },
     {
       match: (key) => key === '_routes',
-      handler: ({ routes }) => {
-        return routes.reduce((acc, route) => {
+      handler: ({ routes, key }) => {
+        return routes[key].reduce((acc, route) => {
           return {
             ...acc,
             [route.method]: (data) => {
