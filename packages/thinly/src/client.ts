@@ -77,11 +77,11 @@ export function createClient(options) {
     },
     {
       match: () => true,
-      handler: ({ routes, key, modifiers, depth, context, initialValue }) => {
+      handler: ({ routes, key, modifiers, depth, context }) => {
         console.log({ acc: routes, key, where: 'default' })
         return {
           ...routes,
-          [key]: walk(routes[key], modifiers, depth + 1, context, initialValue),
+          [key]: walk(routes[key], modifiers, depth + 1, context),
         }
       },
     },
