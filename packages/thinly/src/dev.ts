@@ -100,7 +100,77 @@ async function buildClient(routes) {
 }
 
 async function buildClientTypes(routes) {
+  console.log('Start generating client types...')
   const map = createMap(routes)
+
+  const test = walk(
+    map,
+    [
+      {
+        match: (key) => key === '_routes',
+        handler: ({ routes, key, index }) => {
+          console.log({ acc: routes, key, where: '"_routes" handler' })
+
+          return routes[index].reduce((acc, route) => {
+            return [
+              ...acc,
+              factory.createMethodSignature(
+                undefined,
+                factory.createIdentifier(route.method),
+                undefined,
+                undefined,
+                [],
+                undefined,
+              ),
+            ]
+          }, [])
+        },
+      },
+      // {
+      //   match: (key) => key.startsWith(':'),
+      //   handler: ({ routes, key, index}) => {
+
+      //   }
+      // },
+      {
+        match: () => true,
+        handler: ({ routes, key, modifiers, depth, context, index }) => {
+          console.log({ acc: routes, key, where: 'default' })
+
+          console.log(
+            walk(
+              routes[index],
+              modifiers,
+              depth + 1,
+              context,
+              Object.values(routes[index]),
+            ),
+          )
+
+          routes[index] = factory.createPropertySignature(
+            undefined,
+            factory.createIdentifier(key),
+            undefined,
+            factory.createTypeLiteralNode(
+              walk(
+                routes[index],
+                modifiers,
+                depth + 1,
+                context,
+                Object.values(routes[index]),
+              ),
+            ),
+          )
+
+          return routes
+        },
+      },
+    ],
+    0,
+    {},
+    Object.values(map),
+  )
+  console.log(test)
 
   const resultFile = createSourceFile(
     'index.d.ts',
@@ -129,47 +199,7 @@ async function buildClientTypes(routes) {
               factory.createIdentifier('Client'),
               undefined,
               undefined,
-              Object.values(
-                walk(map, [
-                  {
-                    match: (key) => key === '_routes',
-                    handler: ({ routes, key }) => {
-                      return factory.createTypeLiteralNode([
-                        ...routes[key].map((route) => {
-                          return factory.createMethodSignature(
-                            undefined,
-                            factory.createIdentifier(route.method),
-                            undefined,
-                            undefined,
-                            [],
-                            undefined,
-                          )
-                        }),
-                      ])
-                    },
-                  },
-                  {
-                    match: () => true,
-                    handler: ({ routes, key, modifiers, depth }) => {
-                      console.log(routes[key])
-                      const value = factory.createPropertySignature(
-                        undefined,
-                        factory.createIdentifier(
-                          key.startsWith(':') ? key.slice(1) : key,
-                        ),
-                        undefined,
-                        walk(routes[key], modifiers, depth + 1),
-                      )
-
-                      if (depth > 1) {
-                        return value
-                      }
-
-                      return { ...routes, [key]: value }
-                    },
-                  },
-                ]),
-              ),
+              test,
               // routes.exports.map((name) => {
               //   return factory.createMethodSignature(
               //     undefined,
@@ -263,6 +293,8 @@ async function buildClientTypes(routes) {
   const result = printer.printList(ts.ListFormat.MultiLine, ast, resultFile)
 
   writeFileSync(join(config.client.output, 'index.d.ts'), result)
+
+  console.log('Generated client types!')
 }
 
 export default async () => {
@@ -302,9 +334,9 @@ export default async () => {
             bundled: async ([routes]) => {
               await buildClient(routes)
 
-              // await buildClientTypes(
-              //   await import(join(process.cwd(), '.thinly/routes')),
-              // )
+              await buildClientTypes(
+                await import(join(process.cwd(), '.thinly/routes')),
+              )
             },
           },
         })

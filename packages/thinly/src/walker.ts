@@ -10,15 +10,35 @@
 //   depth: number
 // }
 
-export function walk(map, modifiers, depth = 0, context = {}) {
-  return Object.keys(map).reduce((acc, key) => {
+export function walk(
+  map,
+  modifiers,
+  depth = 0,
+  context = {},
+  initialValue = null,
+) {
+  initialValue = initialValue || map
+
+  return Object.keys(map).reduce((acc, key, index) => {
     const modifier = modifiers.find((modifier) => modifier.match(key))
 
     if (modifier) {
-      return modifier.handler({ routes: acc, key, modifiers, depth, context })
+      return modifier.handler({
+        routes: acc,
+        key,
+        modifiers,
+        depth,
+        context,
+        initialValue,
+        index,
+      })
     }
 
-    console.log({ acc, key, where: 'default' })
-    return { ...acc, [key]: walk(acc[key], modifiers, depth + 1, context) }
-  }, map)
+    throw new Error('Unhandled modifier')
+    // console.log({ acc, key, where: 'default' })
+    // return {
+    //   ...acc,
+    //   [key]: walk(acc[key], modifiers, depth + 1, context, initialValue),
+    // }
+  }, initialValue)
 }

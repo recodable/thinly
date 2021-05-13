@@ -75,5 +75,15 @@ export function createClient(options) {
         }, routes)
       },
     },
+    {
+      match: () => true,
+      handler: ({ routes, key, modifiers, depth, context, initialValue }) => {
+        console.log({ acc: routes, key, where: 'default' })
+        return {
+          ...routes,
+          [key]: walk(routes[key], modifiers, depth + 1, context, initialValue),
+        }
+      },
+    },
   ])
 }
