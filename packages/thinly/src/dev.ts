@@ -1,14 +1,10 @@
-import { rollup } from 'rollup'
 import { join } from 'path'
 import bundleRoutes from './bundleRoutes'
-import virtual from '@rollup/plugin-virtual'
-import pkg from '../package.json'
-import replace from '@rollup/plugin-replace'
 import ts, { createSourceFile, factory, createPrinter } from 'typescript'
 import { writeFileSync } from 'fs'
 import { createMap } from './mapper'
 import { walk } from './walker'
-import sucrase from '@rollup/plugin-sucrase'
+import { createBundle } from './bundle'
 
 export type ClientOptions = {
   output: string
@@ -27,33 +23,6 @@ const defaultConfig: Options = {
 const config: Options = {
   ...defaultConfig,
   ...require(join(process.cwd(), 'thinly.config.js')),
-}
-
-async function createBundle(input, routes) {
-  return rollup({
-    input,
-
-    plugins: [
-      sucrase({
-        exclude: ['node_modules/**'],
-        transforms: ['typescript'],
-      }),
-
-      virtual({
-        routes: `
-          ${routes.code}
-          export default { ${routes.exports} }
-        `,
-      }),
-
-      replace({
-        preventAssignment: true,
-        'process.env.NODE_ENV': JSON.stringify('development'),
-      }),
-    ],
-
-    external: [...Object.keys(pkg.dependencies), 'path'],
-  })
 }
 
 async function buildServer(routes) {

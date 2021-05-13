@@ -5,6 +5,7 @@ import multi from '@rollup/plugin-multi-entry'
 import camelCase from 'lodash.camelcase'
 import { transformSync } from '@babel/core'
 import pkg from '../package.json'
+import { external } from './bundle'
 
 function isVirtual(id): boolean {
   return /\x00virtual:.*/.test(id)
@@ -173,7 +174,7 @@ export default async function bundleRoutes(options: Options = {}) {
       },
     ],
 
-    external: [...Object.keys(pkg.dependencies)],
+    external,
   })
 
   watcher.on('event', async (event) => {

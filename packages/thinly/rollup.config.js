@@ -21,7 +21,9 @@ export default {
     json(),
     replace({
       preventAssignment: true,
-      __dirname: JSON.stringify(join(__dirname, 'src')),
+      values: {
+        __dirname: JSON.stringify(join(__dirname, 'src')),
+      },
     }),
   ],
 
