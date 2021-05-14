@@ -1,9 +1,9 @@
 import { BaseRoute } from './types'
 
-export function createMap(routes) {
+export function createMap(routes: BaseRoute[]) {
   let result = {}
 
-  Object.values(routes).forEach((route: BaseRoute) => {
+  Object.values(routes).forEach((route) => {
     const parts = route.path.split('/').filter((v) => v)
     result = map(parts, route, result)
   })

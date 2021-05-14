@@ -10,11 +10,9 @@ const routes: BaseRoute[] = [
   },
 ]
 
-const result = createMap(routes)
+const result: any = createMap(routes)
 
 test('map all routes into a API map', () => {
-  // @ts-ignore
   expect(result.posts[':id'].comments._routes.length).toBe(2)
-  // @ts-ignore
   expect(result.posts[':id'].comments[':commentId']._routes.length).toBe(1)
 })
