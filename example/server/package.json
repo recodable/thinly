@@ -4,16 +4,16 @@
     "build": "thinly build"
   },
   "dependencies": {
-    "@prisma/client": "^2.22.0",
-    "@thinly/validation": "workspace:^0.0.10",
-    "thinly": "workspace:^0.0.11",
+    "@prisma/client": "^2.22.1",
+    "@thinly/validation": "workspace:^0.0.12",
+    "thinly": "workspace:^0.0.12",
     "tslib": "^2.2.0"
   },
   "devDependencies": {
-    "@babel/preset-env": "^7.14.1",
+    "@babel/preset-env": "^7.14.2",
     "@types/express": "^4.17.11",
     "@types/jest": "^26.0.23",
-    "@types/node": "^15.0.2",
-    "prisma": "^2.22.0"
+    "@types/node": "^15.0.3",
+    "prisma": "^2.22.1"
   }
 }
