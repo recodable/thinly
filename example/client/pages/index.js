@@ -7,7 +7,7 @@ export default function Home() {
     password: '',
   })
   useEffect(() => {
-    client.posts.id(1).comments.get()
+    client.posts.id(1).comments.get().then(console.log)
     // console.log({ client })
     // console.log({ test: client.posts.id(1).comments.post() })
     // setTimeout(() => {
@@ -19,7 +19,7 @@ export default function Home() {
     <form
       onSubmit={(e) => {
         e.preventDefault()
-        client.login.post(formData)
+        client.login.post({ body: formData }).then(console.log)
       }}
     >
       <input
