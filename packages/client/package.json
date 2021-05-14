@@ -6,8 +6,8 @@
   "types": "index.d.ts",
   "dependencies": {
     "@thinly/validation": "workspace:^0.0.12",
-    "axios": "^0.21.1",
-    "tslib": "^2.2.0"
+    "tslib": "^2.2.0",
+    "whatwg-fetch": "^3.6.2"
   },
   "devDependencies": {
     "typescript": "^4.2.4"

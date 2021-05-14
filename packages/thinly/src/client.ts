@@ -1,9 +1,9 @@
 // @ts-ignore
 import routes from 'routes'
 import { createMap } from './mapper'
-import axios from 'axios'
 import * as validation from '@thinly/validation'
 import { walk } from './walker'
+import 'whatwg-fetch'
 
 const defaultOptions = { env: { API_URL: '' } }
 
