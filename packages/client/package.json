@@ -1,6 +1,6 @@
 {
   "name": "@thinly/client",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "index.js",
   "module": "index.esm.js",
   "types": "index.d.ts",
