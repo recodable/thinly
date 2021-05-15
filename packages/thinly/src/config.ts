@@ -9,11 +9,13 @@ export type ServerOptions = {
 }
 
 export type Options = {
+  dir: string
   client: ClientOptions
   server: ServerOptions
 }
 
 export const defaultConfig: Options = {
+  dir: 'routes',
   client: {
     output: '.thinly/client',
   },

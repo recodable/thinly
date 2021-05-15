@@ -20,8 +20,8 @@ const defaultOptions = {
 }
 
 export const input = [
-  join(process.cwd(), 'routes', '**', '*.ts'),
-  join(process.cwd(), 'routes', '**', '*.js'),
+  join(process.cwd(), config.dir, '**', '*.ts'),
+  join(process.cwd(), config.dir, '**', '*.js'),
 ]
 
 export default async function bundleRoutes(options: Options = {}) {
