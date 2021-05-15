@@ -1,0 +1,16 @@
+{
+  "name": "@thinly/errors",
+  "version": "0.0.12",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "scripts": {
+    "dev": "rollup -cw",
+    "build": "rollup -c",
+    "prepublish": "pnpm build"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^8.2.1",
+    "rollup": "^2.47.0"
+  }
+}

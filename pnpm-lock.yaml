@@ -29,6 +29,7 @@ importers:
     specifiers:
       '@babel/preset-env': ^7.14.2
       '@prisma/client': ^2.22.1
+      '@thinly/errors': workspace:^0.0.12
       '@thinly/validation': workspace:^0.0.12
       '@types/express': ^4.17.11
       '@types/jest': ^26.0.23
@@ -38,6 +39,7 @@ importers:
       tslib: ^2.2.0
     dependencies:
       '@prisma/client': 2.22.1_prisma@2.22.1
+      '@thinly/errors': link:../../packages/errors
       '@thinly/validation': link:../../packages/validation
       thinly: link:../../packages/thinly
       tslib: 2.2.0
@@ -61,6 +63,14 @@ importers:
     devDependencies:
       typescript: 4.2.4
 
+  packages/errors:
+    specifiers:
+      '@rollup/plugin-typescript': ^8.2.1
+      rollup: ^2.47.0
+    devDependencies:
+      '@rollup/plugin-typescript': 8.2.1_rollup@2.48.0
+      rollup: 2.48.0
+
   packages/thinly:
     specifiers:
       '@babel/core': ^7.14.2
@@ -70,6 +80,7 @@ importers:
       '@rollup/plugin-sucrase': ^3.1.0
       '@rollup/plugin-typescript': ^8.2.1
       '@rollup/plugin-virtual': ^2.0.3
+      '@thinly/errors': workspace:^0.0.12
       '@thinly/validation': workspace:^0.0.12
       '@types/express': ^4.17.11
       '@types/node': ^15.0.3
@@ -94,6 +105,7 @@ importers:
       '@rollup/plugin-replace': 2.4.2_rollup@2.47.0
       '@rollup/plugin-sucrase': 3.1.0_rollup@2.47.0
       '@rollup/plugin-virtual': 2.0.3_rollup@2.47.0
+      '@thinly/errors': link:../errors
       '@thinly/validation': link:../validation
       body-parser: 1.19.0
       chalk: 4.1.1
@@ -1579,6 +1591,19 @@ packages:
       rollup: 2.47.0
     dev: true
 
+  /@rollup/plugin-typescript/8.2.1_rollup@2.48.0:
+    resolution: {integrity: sha512-Qd2E1pleDR4bwyFxqbjt4eJf+wB0UKVMLc7/BAFDGVdAXQMCsD4DUv5/7/ww47BZCYxWtJqe1Lo0KVNswBJlRw==}
+    engines: {node: '>=8.0.0'}
+    peerDependencies:
+      rollup: ^2.14.0
+      tslib: '*'
+      typescript: '>=3.7.0'
+    dependencies:
+      '@rollup/pluginutils': 3.1.0_rollup@2.48.0
+      resolve: 1.20.0
+      rollup: 2.48.0
+    dev: true
+
   /@rollup/plugin-virtual/2.0.3_rollup@2.47.0:
     resolution: {integrity: sha512-pw6ziJcyjZtntQ//bkad9qXaBx665SgEL8C8KI5wO8G5iU5MPxvdWrQyVaAvjojGm9tJoS8M9Z/EEepbqieYmw==}
     peerDependencies:
@@ -1597,6 +1622,18 @@ packages:
       estree-walker: 1.0.1
       picomatch: 2.2.3
       rollup: 2.47.0
+
+  /@rollup/pluginutils/3.1.0_rollup@2.48.0:
+    resolution: {integrity: sha512-GksZ6pr6TpIjHm8h9lSQ8pi8BE9VeubNT0OMJ3B5uZJ8pz73NPiqOtCog/x2/QzM1ENChPKxMDhiQuRHsqc+lg==}
+    engines: {node: '>= 8.0.0'}
+    peerDependencies:
+      rollup: ^1.20.0||^2.0.0
+    dependencies:
+      '@types/estree': 0.0.39
+      estree-walker: 1.0.1
+      picomatch: 2.2.3
+      rollup: 2.48.0
+    dev: true
 
   /@sinonjs/commons/1.8.3:
     resolution: {integrity: sha512-xkNcLAn/wZaX14RPlwizcKicDk9G3F8m2nU3L7Ukm5zBgTwiT0wsoFAHx9Jq56fJA1z/7uKGtCRu16sOUCLIHQ==}
@@ -5568,6 +5605,14 @@ packages:
     hasBin: true
     optionalDependencies:
       fsevents: 2.3.2
+
+  /rollup/2.48.0:
+    resolution: {integrity: sha512-wl9ZSSSsi5579oscSDYSzGn092tCS076YB+TQrzsGuSfYyJeep8eEWj0eaRjuC5McuMNmcnR8icBqiE/FWNB1A==}
+    engines: {node: '>=10.0.0'}
+    hasBin: true
+    optionalDependencies:
+      fsevents: 2.3.2
+    dev: true
 
   /rsvp/4.8.5:
     resolution: {integrity: sha512-nfMOlASu9OnRJo1mbEk2cz0D56a1MBNrJ7orjRZQG10XDyuvwksKbuXNp6qa+kbn839HwjwhBzhFmdsaEAfauA==}

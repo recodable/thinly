@@ -5,6 +5,7 @@
   },
   "dependencies": {
     "@prisma/client": "^2.22.1",
+    "@thinly/errors": "workspace:^0.0.12",
     "@thinly/validation": "workspace:^0.0.12",
     "thinly": "workspace:^0.0.12",
     "tslib": "^2.2.0"
