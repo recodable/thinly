@@ -32,7 +32,7 @@ export async function restart() {
 }
 
 export default async () => {
-  watch(input)
+  watch(input, { awaitWriteFinish: true })
     .on('ready', start)
     .on('add', restart)
     .on('change', restart)
