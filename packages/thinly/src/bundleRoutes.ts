@@ -5,6 +5,7 @@ import multi from '@rollup/plugin-multi-entry'
 import camelCase from 'lodash.camelcase'
 import { transformSync } from '@babel/core'
 import { external } from './bundle'
+import config from './config'
 
 function isVirtual(id): boolean {
   return /\x00virtual:.*/.test(id)
@@ -159,12 +160,12 @@ export default async function bundleRoutes(options: Options = {}) {
   })
 
   await bundle.write({
-    file: '.thinly/routes.js',
+    file: join(config.server.output, 'routes.js'),
     format: 'cjs',
   })
 
   const { output } = await bundle.generate({
-    file: '.thinly/routes.js',
+    file: join(config.server.output, 'routes.js'),
     format: 'cjs',
   })
 

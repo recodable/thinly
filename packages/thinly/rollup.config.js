@@ -28,6 +28,12 @@ export default [
       }),
     ],
 
-    external: [...Object.keys(pkg.dependencies), 'path', 'fs', 'util'],
+    external: [
+      ...Object.keys(pkg.dependencies),
+      'path',
+      'fs',
+      'util',
+      'fs/promises',
+    ],
   },
 ]

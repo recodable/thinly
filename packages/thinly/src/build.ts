@@ -1,7 +1,7 @@
 import { join } from 'path'
 import bundleRoutes from './bundleRoutes'
 import ts, { createSourceFile, factory, createPrinter } from 'typescript'
-import { writeFileSync } from 'fs'
+import { writeFile } from 'fs/promises'
 import { createMap } from './mapper'
 import { walk } from './walker'
 import { createBundle } from './bundle'
@@ -9,31 +9,13 @@ import chalk from 'chalk'
 import spinner from './spinner'
 import { Application } from 'express'
 import { Method } from './types'
-
-export type ClientOptions = {
-  output: string
-}
-
-export type Options = {
-  client: ClientOptions
-}
-
-const defaultConfig: Options = {
-  client: {
-    output: '.thinly/client',
-  },
-}
-
-const config: Options = {
-  ...defaultConfig,
-  ...require(join(process.cwd(), 'thinly.config.js')),
-}
+import config from './config'
 
 export async function buildServer(routes) {
   const bundle = await createBundle(join(__dirname, 'server.ts'), routes)
 
   await bundle.write({
-    file: '.thinly/index.js',
+    file: join(config.server.output, 'index.js'),
     format: 'cjs',
     exports: 'auto',
   })
@@ -267,7 +249,7 @@ export async function buildClientTypes(routes) {
 
   const result = printer.printList(ts.ListFormat.MultiLine, ast, resultFile)
 
-  writeFileSync(join(config.client.output, 'index.d.ts'), result)
+  return writeFile(join(config.client.output, 'index.d.ts'), result)
 }
 
 function getColorMethod(method: Method) {
@@ -294,12 +276,14 @@ export default async () => {
   await buildClient(clientRoutes)
 
   spinner.start('Generate client types')
-  await buildClientTypes(await import(join(process.cwd(), '.thinly/routes')))
+  await buildClientTypes(
+    await import(join(process.cwd(), config.server.output, 'routes')),
+  )
 
   spinner.stop()
 
   // import app
-  const bundledOuput = process.cwd() + '/.thinly/index.js'
+  const bundledOuput = join(process.cwd(), config.server.output, 'index.js')
 
   delete require.cache[bundledOuput]
 
