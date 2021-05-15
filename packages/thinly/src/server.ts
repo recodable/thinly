@@ -31,7 +31,7 @@ Object.values(routes).map((route: ServerRoute) => {
       })
       .catch((error: ThinlyError) => {
         if (error instanceof ThinlyError) {
-          return res.status(error.status).send(error.message)
+          return res.status(error.status).send(error.responseBody)
         }
 
         throw error
