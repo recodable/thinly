@@ -1,6 +1,6 @@
 {
   "name": "thinly",
-  "version": "0.0.12",
+  "version": "0.1.0",
   "bin": {
     "thinly": "./dist/bin/thinly.js"
   },
@@ -14,7 +14,7 @@
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-typescript": "^8.2.1",
     "@types/express": "^4.17.11",
-    "@types/node": "^15.0.3",
+    "@types/node": "^15.3.0",
     "jest": "^26.6.3",
     "rollup-plugin-executable-output": "^1.3.0",
     "rollup-plugin-preserve-shebang": "^1.0.1"
@@ -25,8 +25,8 @@
     "@rollup/plugin-replace": "^2.4.2",
     "@rollup/plugin-sucrase": "^3.1.0",
     "@rollup/plugin-virtual": "^2.0.3",
-    "@thinly/errors": "workspace:^0.0.12",
-    "@thinly/validation": "workspace:^0.0.12",
+    "@thinly/errors": "workspace:^0.1.0",
+    "@thinly/validation": "workspace:^0.1.0",
     "body-parser": "^1.19.0",
     "chalk": "^4.1.1",
     "chokidar": "^3.5.1",
@@ -35,7 +35,7 @@
     "express": "^4.17.1",
     "lodash.camelcase": "^4.3.0",
     "ora": "^5.4.0",
-    "rollup": "^2.47.0",
+    "rollup": "^2.48.0",
     "tslib": "^2.2.0",
     "typescript": "^4.2.4",
     "whatwg-fetch": "^3.6.2"
