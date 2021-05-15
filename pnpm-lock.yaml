@@ -69,8 +69,11 @@ importers:
     specifiers:
       '@rollup/plugin-typescript': ^8.2.1
       rollup: ^2.47.0
+      tslib: ^2.2.0
+    dependencies:
+      tslib: 2.2.0
     devDependencies:
-      '@rollup/plugin-typescript': 8.2.1_rollup@2.48.0
+      '@rollup/plugin-typescript': 8.2.1_rollup@2.48.0+tslib@2.2.0
       rollup: 2.48.0
 
   packages/thinly:
@@ -1593,7 +1596,7 @@ packages:
       rollup: 2.47.0
     dev: true
 
-  /@rollup/plugin-typescript/8.2.1_rollup@2.48.0:
+  /@rollup/plugin-typescript/8.2.1_rollup@2.48.0+tslib@2.2.0:
     resolution: {integrity: sha512-Qd2E1pleDR4bwyFxqbjt4eJf+wB0UKVMLc7/BAFDGVdAXQMCsD4DUv5/7/ww47BZCYxWtJqe1Lo0KVNswBJlRw==}
     engines: {node: '>=8.0.0'}
     peerDependencies:
@@ -1604,6 +1607,7 @@ packages:
       '@rollup/pluginutils': 3.1.0_rollup@2.48.0
       resolve: 1.20.0
       rollup: 2.48.0
+      tslib: 2.2.0
     dev: true
 
   /@rollup/plugin-virtual/2.0.3_rollup@2.47.0:
