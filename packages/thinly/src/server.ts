@@ -17,10 +17,10 @@ Object.values(routes).map((route: ServerRoute) => {
     if (route.validationSchema) {
       const schema = validation.object().shape(route.validationSchema)
 
-      const valid = await schema.isValid(req.body)
-
-      if (!valid) {
-        return res.status(422).send({ errors: ['invalid data'] })
+      try {
+        await schema.validate(req.body)
+      } catch({ errors }) {
+        return res.status(422).send({ errors })
       }
     }
 
