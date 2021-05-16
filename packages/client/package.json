@@ -1,11 +1,11 @@
 {
   "name": "@thinly/client",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "main": "index.js",
   "module": "index.esm.js",
   "types": "index.d.ts",
   "dependencies": {
-    "@thinly/validation": "workspace:^0.1.3",
+    "@thinly/validation": "workspace:^0.1.4",
     "tslib": "^2.2.0",
     "whatwg-fetch": "^3.6.2"
   },
