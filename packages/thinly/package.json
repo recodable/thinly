@@ -1,6 +1,6 @@
 {
   "name": "thinly",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "bin": {
     "thinly": "./dist/bin/thinly.js"
   },
