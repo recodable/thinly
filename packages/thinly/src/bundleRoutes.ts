@@ -50,7 +50,9 @@ export default async function bundleRoutes(options: Options = {}) {
             return code
           }
 
-          let [route] = id.replace(join(process.cwd(), 'routes'), '').split('.')
+          let [route] = id
+            .replace(join(process.cwd(), config.dir), '')
+            .split('.')
 
           const name = camelCase(route)
 
