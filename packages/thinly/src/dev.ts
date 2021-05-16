@@ -5,16 +5,20 @@ import type { Application } from 'express'
 import type { Server } from 'http'
 import chalk from 'chalk'
 
+export type Options = {
+  port: number
+}
+
 export let server: Server = null
 
-export async function start(): Promise<Server> {
+export async function start({ port }: Options): Promise<Server> {
   const app: Application = await build()
 
-  server = app.listen(3000, () => {
+  server = app.listen(port, () => {
     console.log('\n')
     console.log(
       chalk.bgGreen(
-        `  > API running on ${chalk.underline('http://localhost:3000')}  `,
+        `  > API running on ${chalk.underline(`http://localhost:${port}`)}  `,
       ),
     )
   })
@@ -22,19 +26,28 @@ export async function start(): Promise<Server> {
   return server
 }
 
-export async function restart() {
+export async function restart({ port }: Options) {
   if (!server) return
 
   server.close((error) => {
     if (error) throw error
-    start()
+    start({ port })
   })
 }
 
-export default async () => {
+const defaultOptions: Options = {
+  port: 3000,
+}
+
+export default async (overrideOptions: Partial<Options>) => {
+  const options: Options = {
+    ...defaultOptions,
+    ...overrideOptions,
+  }
+
   watch(input, { awaitWriteFinish: true })
-    .on('ready', start)
-    .on('add', restart)
-    .on('change', restart)
-    .on('unlink', restart)
+    .on('ready', () => start(options))
+    .on('add', () => restart(options))
+    .on('change', () => restart(options))
+    .on('unlink', () => restart(options))
 }
